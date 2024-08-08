@@ -37,23 +37,31 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="text-center bg-gradient p-10 rounded-2xl mb-8 tour-start">
-                <h1 className="text-2xl md:text-4xl font-bold mb-6">{t('welcomeMessage')}</h1>
-                <p className="text-lg mb-4">{t('welcomeSubMessage')}</p>
-                <ul className="list-disc list-inside text-left max-w-2xl mx-auto mb-6">
-                    <li>{t('features.rows')}</li>
-                    <li>{t('features.customize')}</li>
-                    <li>{t('features.dragDrop')}</li>
-                    <li>{t('features.sessions')}</li>
-                    <li>{t('features.generate')}</li>
-                </ul>
-                <p className="text-lg mb-6">{t('tourPrompt')}</p>
-                <TourGuide/>
-                <GlobalSettingsManager
-                    isOpen={showGlobalSettings}
-                    onOpen={handleOpenGlobalSettings}
-                    onClose={handleCloseGlobalSettings}
-                />
+            <div className="text-center bg-gradient rounded-2xl mb-8 tour-start">
+                <div className="pl-8 pr-8 pt-8">
+                    <h1 className="text-2xl md:text-4xl font-bold mb-6">{t('welcomeMessage')}</h1>
+                    <p className="text-lg mb-4">{t('welcomeSubMessage')}</p>
+                    <ul className="list-disc list-inside text-left max-w-2xl mx-auto mb-6">
+                        <li>{t('features.rows')}</li>
+                        <li>{t('features.customize')}</li>
+                        <li>{t('features.dragDrop')}</li>
+                        <li>{t('features.sessions')}</li>
+                        <li>{t('features.generate')}</li>
+                    </ul>
+                    <p className="text-lg ">{t('tourPrompt')}</p>
+                </div>
+                <div className="flex flex-col sm:flex-row justify-center gap-4 p-4 mb-8">
+                    <div className="w-full sm:w-auto">
+                        <TourGuide/>
+                    </div>
+                    <div className="w-full sm:w-auto">
+                        <GlobalSettingsManager
+                            isOpen={showGlobalSettings}
+                            onOpen={handleOpenGlobalSettings}
+                            onClose={handleCloseGlobalSettings}
+                        />
+                    </div>
+                </div>
             </div>
             <Management/>
             <Suspense fallback={<SkeletonLoader/>}>

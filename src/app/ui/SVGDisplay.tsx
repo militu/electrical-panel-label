@@ -16,14 +16,21 @@ const SVGDisplay: React.FC<SVGDisplayProps> = React.memo(({svgContent}) => {
 
     return (
         <div className="mt-6 tour-svg-preview">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold mb-2 md:mb-0">{t('generatedSVG')}</h2>
-                <div className="flex gap-2">
-                    <DownloadButton svgContent={svgContent} className="tour-download"/>
-                    <PrintButton svgContent={svgContent} className="tour-print" config={{
-                        PAGE_WIDTH: currentSession?.globalSettings.PAGE_WIDTH || 297,
-                        PAGE_HEIGHT: currentSession?.globalSettings.PAGE_HEIGHT || 207
-                    }}/>
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold mb-4 sm:mb-0 text-center sm:text-left w-full sm:w-auto">{t('generatedSVG')}</h2>
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <DownloadButton
+                        svgContent={svgContent}
+                        className="w-full sm:w-auto tour-download"
+                    />
+                    <PrintButton
+                        svgContent={svgContent}
+                        className="w-full sm:w-auto tour-print"
+                        config={{
+                            PAGE_WIDTH: currentSession?.globalSettings.PAGE_WIDTH || 297,
+                            PAGE_HEIGHT: currentSession?.globalSettings.PAGE_HEIGHT || 207
+                        }}
+                    />
                 </div>
             </div>
             <div

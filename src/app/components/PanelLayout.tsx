@@ -115,16 +115,17 @@ const PanelLayout: React.FC = () => {
                     {t('rowTitle', {index: rowIndex + 1})}
                 </AccordionTrigger>
                 <AccordionContent>
-                    <div className="flex justify-end mb-2">
-                        <div className="tour-session-management">
-                            <Button onClick={() => handleDuplicateRow(rowIndex)} className="mr-2">
+                        <div className="flex flex-col md:flex-row gap-2 mb-8 tour-session-management justify-end">
+                            <Button onClick={() => handleDuplicateRow(rowIndex)} className="w-full sm:w-auto">
                                 {t('duplicateRow')}
                             </Button>
                             <AlertDialog open={rowToDelete === rowIndex}
                                          onOpenChange={(open) => setRowToDelete(open ? rowIndex : null)}>
                                 <AlertDialogTrigger asChild>
                                     <Button onClick={() => handleDeleteClick(rowIndex)} type="button"
-                                            variant="destructive">{t('deleteRow')}</Button>
+                                            variant="destructive" className="w-full sm:w-auto">
+                                        {t('deleteRow')}
+                                    </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
@@ -141,7 +142,6 @@ const PanelLayout: React.FC = () => {
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                        </div>
                     </div>
                     <RowContainer rowIndex={rowIndex} units={row} onUpdate={updateSVG}/>
                 </AccordionContent>

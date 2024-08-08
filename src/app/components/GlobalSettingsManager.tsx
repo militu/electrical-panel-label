@@ -45,7 +45,7 @@ const GlobalSettingsManager: React.FC<GlobalSettingsManagerProps> = ({
 
     return (
         <>
-            <Button onClick={onOpen} variant="outline" className="tour-global-settings">
+            <Button onClick={onOpen} variant="outline" className="w-full tour-global-settings">
                 {t('title')}
             </Button>
             <Dialog open={isOpen} onOpenChange={(open) => open ? onOpen() : onClose()}>

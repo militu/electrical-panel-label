@@ -91,7 +91,7 @@ const TourGuide: React.FC = () => {
                 run={runTour}
                 callback={handleJoyrideCallback}
             />
-            <Button onClick={() => setRunTour(true)} className="mr-4 tour-start">
+            <Button onClick={() => setRunTour(true)} className="w-full tour-start">
                 {t('startTour')}
             </Button>
         </>
