@@ -9,7 +9,7 @@ export default function Nav() {
     return (
         <nav className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
             <LocaleSwitcher/>
-            <a href="https://github.com/yourusername/your-repo" target="_blank" rel="noopener noreferrer"
+            <a href="https://github.com/militu/electrical-panel-label" target="_blank" rel="noopener noreferrer"
                className="w-full md:w-auto">
                 <Button variant="outline" className="flex items-center gap-2 w-full md:w-auto justify-center">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
