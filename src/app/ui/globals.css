@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Enhanced gradient */
+        --gradient: linear-gradient(90deg, #b1c8f3, #d7dbf3, #f0e0f8);
+
+        /* Main colors - increased saturation for vibrancy */
+        --background: 223 30% 98%;
+        --foreground: 223 15% 10%;
+
+        /* Muted colors - adjusted for better contrast */
+        --muted: 223 15% 90%;
+        --muted-foreground: 223 10% 40%;
+
+        /* Popover and card - slightly darker for distinction */
+        --popover: 223 15% 95%;
+        --popover-foreground: 223 15% 10%;
+        --card: 223 15% 95%;
+        --card-foreground: 223 15% 10%;
+
+        /* Border and input - more pronounced */
+        --border: 223 20% 85%;
+        --input: 223 20% 85%;
+
+        /* Primary - more saturated for emphasis */
+        --primary: 223 80% 30%;
+        --primary-foreground: 223 5% 95%;
+
+        /* Secondary - more contrast with primary */
+        --secondary: 223 20% 92%;
+        --secondary-foreground: 223 15% 15%;
+
+        /* Accent - new color for visual interest */
+        --accent: 43 80% 70%;
+        --accent-foreground: 223 15% 10%;
+
+        /* Semantic colors - adjusted for clarity */
+        --destructive: 0 85% 60%;
+        --destructive-foreground: 0 0% 98%;
+        --success: 160 84% 39%;
+        --success-foreground: 160 0% 98%;
+        --warning: 43 96% 56%;
+        --warning-foreground: 43 15% 10%;
+
+        /* Ring - matched to primary for consistency */
+        --ring: 223 80% 30%;
+
+        /* Radius - slightly increased for a softer look */
+        --radius: 0.625rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@keyframes wiggle {
+    0%, 100% {
+        transform: rotate(-3deg);
+    }
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+.wiggle {
+    animation: wiggle 0.3s ease;
+}
+
+body:not(.body-visible) {
+    visibility: hidden;
+}
+
+.formkit-drag-placeholder {
+    opacity: 0.5;
+    border: 2px dashed #ccc;
+}
+
+.formkit-drag-active {
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}

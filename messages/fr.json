@@ -1,0 +1,253 @@
+{
+  "Header": {
+    "title": "Electrical Panel Label"
+  },
+  "HomePage": {
+    "welcomeMessage": "Bienvenue sur Electrical Panel Label",
+    "welcomeSubMessage": "Electrical Panel Label permet de concevoir, personnaliser et générer des étiquettes pour panneaux électriques simplement. L'interface offre les fonctionnalités suivantes :",
+    "features": {
+      "rows": "Création et gestion de plusieurs rangées de modules",
+      "customize": "Personnalisation de chaque module avec icônes, couleurs et descriptions",
+      "dragDrop": "Réorganisation par glisser-déposer des modules",
+      "sessions": "Sauvegarde et chargement des sessions de travail",
+      "generate": "Génération d'étiquettes prêtes à l'impression"
+    },
+    "tourPrompt": "Première visite ? Suivez le guide pour découvrir toutes les fonctionnalités et démarrer rapidement !",
+    "startTour": "Commencer la visite"
+  },
+  "Management": {
+    "title": "Gestion des sessions et des imports/exports",
+    "session": {
+      "currentSession": "Session en cours",
+      "unnamedSession": "Session sans nom"
+    }
+  },
+  "GlobalSettings": {
+    "title": "Paramètres globaux"
+  },
+  "PanelLayout": {
+    "title": "Disposition du panneau",
+    "addRow": "Ajouter une rangée",
+    "rowTitle": "Rangée {index}",
+    "noActiveSession": "Aucune session active trouvée",
+    "createOrLoadSession": "Créez une nouvelle session ou chargez-en une existante",
+    "duplicateRow": "Dupliquer la rangée",
+    "deleteRowConfirmTitle": "Confirmer la suppression",
+    "deleteRowConfirmDescription": "Êtes-vous sûr de vouloir supprimer cette rangée ? Cette action est irréversible",
+    "cancelRowConfirm": "Annuler",
+    "deleteRow": "Supprimer la rangée",
+    "toast": {
+      "rowAdded": "Rangée créée avec succès",
+      "rowDuplicated": "Rangée dupliquée avec succès",
+      "rowDeleted": "Rangée supprimée avec succès"
+    }
+  },
+  "ProjectManagement": {
+    "exportProject": "Exporter le projet",
+    "exportFailed": "Échec de l'exportation",
+    "currentSessionNotFound": "Session actuelle introuvable",
+    "noActiveSession": "Aucune session active à exporter",
+    "importSuccessful": "Importation réussie",
+    "importedProject": "Projet importé : {name}",
+    "importFailed": "Échec de l'importation",
+    "invalidFileFormat": "Le fichier sélectionné n'est pas un fichier de projet valide"
+  },
+  "SessionManagement": {
+    "toast": {
+      "saving": "Session sauvegardée",
+      "loading": "Session chargée : {sessionName}",
+      "deleting": "Session supprimée : {sessionName}",
+      "creating": "Session créée"
+    },
+    "buttons": {
+      "new": {
+        "button": "Créer une session",
+        "dialog": {
+          "header": "Nouvelle session",
+          "input_placeholder": "Nom de la nouvelle session",
+          "submit_button": "Créer"
+        }
+      },
+      "load": {
+        "button": "Charger une session",
+        "dialog": {
+          "header": "Charger une session",
+          "select_placeholder": "Choisir une session",
+          "submit_button": "Charger"
+        }
+      },
+      "delete": {
+        "button": "Supprimer une session",
+        "dialog": {
+          "header": "Supprimer une session",
+          "select_placeholder": "Choisir une session",
+          "submit_button": "Supprimer"
+        }
+      }
+    }
+  },
+  "UnitForm": {
+    "preview": "Aperçu",
+    "configurationTitle": "Configuration du module",
+    "previewOnLargeScreen": "Aperçu disponible sur écrans plus larges",
+    "basicInfo": "Informations de base",
+    "moduleSize": "Taille du module",
+    "unitSizePlaceholder": "Taille du module",
+    "icon": "Icône",
+    "selectIconPlaceholder": "Sélectionner une icône",
+    "noIcon": "Pas d'icône",
+    "description": "Description",
+    "descriptionPlaceholder": "Description du module",
+    "textSize": "Taille du texte",
+    "textSizePlaceholder": "Taille du texte",
+    "textColor": "Couleur du texte",
+    "sidebarWidth": "Largeur de la barre latérale",
+    "sidebarWidthPlaceholder": "Largeur de la barre latérale",
+    "sidebarColor": "Couleur de la barre latérale",
+    "bottomColor": "Couleur du bandeau inférieur",
+    "saveChanges": "Sauvegarder",
+    "delete": "Supprimer",
+    "deleteConfirmTitle": "Confirmer la suppression",
+    "deleteConfirmDescription": "Voulez-vous vraiment supprimer ce module ? Cette action est irréversible.",
+    "cancel": "Annuler",
+    "descriptionSettings": "Paramètres de description",
+    "sidebarSettings": "Paramètres de la barre latérale",
+    "bottomSettings": "Paramètres du bandeau inférieur"
+  },
+  "GlobalSettingsForm": {
+    "welcomeMessage": "Paramètres globaux",
+    "unitSettings": "Module",
+    "unitHeight": "Hauteur (mm)",
+    "unitHeightTooltip": "Hauteur d'un module en mm",
+    "unitWidth": "Largeur (mm)",
+    "unitWidthTooltip": "Largeur d'un module en mm",
+    "topColor": "Couleur du haut",
+    "topColorTooltip": "Couleur de l'arrière-plan de l'élément supérieur",
+    "dimensions": "Page",
+    "pageWidth": "Largeur (mm)",
+    "pageWidthTooltip": "Largeur de la page en mm (pour impression)",
+    "pageHeight": "Hauteur (mm)",
+    "pageHeightTooltip": "Hauteur de la page en mm (pour impression)",
+    "layoutSettings": "Mise en page",
+    "borderMargin": "Marge de bordure (mm)",
+    "borderMarginTooltip": "Marge en mm pour impression",
+    "crossSize": "Taille de la croix (mm)",
+    "crossSizeTooltip": "Taille de la croix en mm pour aide au découpage",
+    "resetToDefault": "Réinitialiser",
+    "resetConfirmTitle": "Confirmer la réinitialisation",
+    "resetConfirmDescription": "Cette action réinitialisera tous les paramètres globaux. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "reset": "Réinitialiser",
+    "saveChanges": "Sauvegarder",
+    "toast": {
+      "resetConfirmationTitle": "Paramètres réinitialisés",
+      "resetConfirmationDescription": "Retour aux paramètres de la page A4"
+    }
+  },
+  "SVGDisplayManager": {
+    "loading": "Chargement du document..."
+  },
+  "SVGDisplay": {
+    "generatedSVG": "Document généré"
+  },
+  "DownloadButton": {
+    "noContent": "Aucun contenu à télécharger",
+    "downloadSVG": "Télécharger le document"
+  },
+  "Nav": {
+    "github": "GitHub"
+  },
+  "LocaleSwitcher": {
+    "noLanguageFound": "Aucune langue trouvée"
+  },
+  "RowContainer": {
+    "rowTitle": "Rangée {index}",
+    "deleteRow": "Supprimer la rangée",
+    "deleteRowConfirmTitle": "Confirmer la suppression de la rangée",
+    "deleteRowConfirmDescription": "Cette action supprimera définitivement la rangée et tous ses modules. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "addUnits": "Ajouter module(s)",
+    "deleteSelected": "Supprimer la sélection",
+    "cloneSelected": "Cloner la sélection",
+    "editSelected": "Modifier la sélection",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "deleteSelectedConfirmTitle": "Confirmer la suppression des modules sélectionnés",
+    "deleteSelectedConfirmDescription": "Cette action supprimera définitivement les modules sélectionnés. Cette action est irréversible."
+  },
+  "PrintButton": {
+    "printTitle": "Imprimer le document",
+    "printFailed": "Échec de l'impression",
+    "printWindowBlocked": "Impossible d'ouvrir la fenêtre d'impression. Vérifiez les paramètres de votre bloqueur de popups.",
+    "printSVG": "Imprimer le document"
+  },
+  "ImportButton": {
+    "importProject": "Importer un projet"
+  },
+  "TourGuide": {
+    "startTour": "Commencer la visite",
+    "steps": {
+      "welcome": "Bienvenue dans Electrical Panel Label ! Ce guide présente les principales fonctionnalités de l'application pour créer facilement des étiquettes pour tableaux électriques.",
+      "globalSettings": "Ajustez ici les paramètres globaux affectant l'ensemble de la disposition du tableau, comme les dimensions standard des modules et les paramètres d'impression.",
+      "sessions": "Gérez vos sessions de travail ici. Sauvegardez votre travail actuel, chargez des sessions précédentes ou commencez-en une nouvelle. Une session 'Default Session' est créée par défaut.",
+      "projectManagement": "Utilisez ces boutons pour exporter votre projet actuel ou importer un projet existant. Idéal pour sauvegarder votre travail et le réimporter sur n'importe quel appareil.",
+      "panelLayout": "Voici votre espace de travail principal. Créez et gérez votre disposition de tableau en ajoutant des rangées et des modules.",
+      "addRow": "Cliquez ici pour ajouter une nouvelle rangée à votre disposition de circuit. Chaque rangée peut contenir plusieurs modules.",
+      "unitAddCustomization": "Cliquez ici pour ajouter un module",
+      "unitManagement": "Cliquez sur n'importe quel module pour le personnaliser. Définissez la taille, l'icône, la description, les couleurs, etc. Vous pouvez aussi glisser-déposer les modules pour les réorganiser. Vous pouvez sélectionner des modules pour effectuer des opérations par lots",
+      "unitManagementButtons": "Vous pouvez ajouter plusieurs modules à la fois. De plus, lorsque des modules sont sélectionnés, vous trouverez ici les opérations par lots",
+      "RowManagement": "Vous pouvez supprimer ou dupliquer votre rangée.",
+      "svgPreview": "Visualisez ici un aperçu en direct de votre document d'impression. Il montre l'apparence exacte de votre feuille d'impression finale.",
+      "download": "Une fois satisfait de votre design, téléchargez votre étiquette en tant que fichier SVG, prêt pour l'impression ou une édition ultérieure.",
+      "print": "Pour imprimer directement votre étiquette, utilisez ce bouton. Il ouvre une boîte de dialogue d'impression avec votre SVG correctement formaté pour l'impression."
+    }
+  },
+  "GlobalSettingsManager": {
+    "settingsUpdated": "Paramètres globaux mis à jour",
+    "settingsReset": "Paramètres globaux réinitialisés"
+  },
+  "RowsManager": {
+    "rowAdded": "Rangée ajoutée :",
+    "rowDeleted": "Rangée supprimée :",
+    "rowUpdated": "Rangée {rowIndex} mise à jour :"
+  },
+  "SessionsManager": {
+    "sessionSaved": "Session sauvegardée :",
+    "sessionLoaded": "Session chargée :",
+    "newSessionCreated": "Nouvelle session créée :",
+    "currentSessionUpdated": "Session actuelle mise à jour :",
+    "sessionDeleted": "Session supprimée :"
+  },
+  "svgGenerator": {
+    "unitSvgError": "Erreur lors de la génération du SVG du module :",
+    "createSvgError": "Erreur lors de la création du SVG :"
+  },
+  "Icons": {
+    "noIcon": "Pas d'icône",
+    "air-conditioner": "Climatiseur",
+    "boiler": "Chaudière",
+    "car-charger": "Chargeur de voiture",
+    "circuit-breaker": "Disjoncteur",
+    "differential-switch": "Interrupteur différentiel",
+    "dishwasher": "Lave-vaisselle",
+    "doorbell": "Sonnette",
+    "dryer": "Sèche-linge",
+    "freezer": "Congélateur",
+    "fridge": "Réfrigérateur",
+    "hood": "Hotte",
+    "impulse-relay": "Télérupteur",
+    "intercom": "Interphone",
+    "lighting": "Éclairage",
+    "microwave": "Micro-ondes",
+    "off-peak-contactor": "Contacteur HP/HC",
+    "oven": "Four",
+    "radiator": "Radiateur",
+    "shutters": "Volets",
+    "socket-plug": "Prise électrique",
+    "stove": "Cuisinière",
+    "ventilation": "Ventilation",
+    "washing-machine": "Machine à laver",
+    "water-heater": "Chauffe-eau"
+  }
+}
