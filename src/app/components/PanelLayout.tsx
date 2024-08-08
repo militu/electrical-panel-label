@@ -66,7 +66,7 @@ const PanelLayout: React.FC = () => {
         }
     }, [currentSession?.rows, currentSession?.globalSettings, updateSVG]);
 
-    const rows = currentSession?.rows || [];
+    const rows = useMemo(() => currentSession?.rows || [], [currentSession]);
 
     const handleAddRow = useCallback(() => {
         addRow();

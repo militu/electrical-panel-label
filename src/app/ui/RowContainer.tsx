@@ -52,6 +52,7 @@ const RowContainer: React.FC<RowContainerProps> = ({rowIndex, units, onUpdate}) 
         if (JSON.stringify(units) !== JSON.stringify(dragAndDropUnits)) {
             setDragAndDropUnits(units);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [units, setDragAndDropUnits]);
 
     const updateRowIfChanged = useCallback(() => {
@@ -183,7 +184,8 @@ const RowContainer: React.FC<RowContainerProps> = ({rowIndex, units, onUpdate}) 
                         </Button>
                         <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
                             <AlertDialogTrigger asChild>
-                                <Button onClick={handleDeleteSelected} variant="destructive" className="w-full md:w-auto">
+                                <Button onClick={handleDeleteSelected} variant="destructive"
+                                        className="w-full md:w-auto">
                                     {t('deleteSelected')}
                                 </Button>
                             </AlertDialogTrigger>
