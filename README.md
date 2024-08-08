@@ -1,5 +1,7 @@
 # Electrical Panel Label
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Electrical Panel Label is a simple, open-source web application that allows you to design, customize, and generate
 labels for electrical panels easily. Born out of a personal need and the desire to provide a free, subscription-less
 alternative to the community, this project aims to simplify the process of creating clear, customizable labels for your
@@ -16,7 +18,11 @@ electrical panel.
 
 ## Live Demo
 
-You can try out Electrical Panel Label here: [Live Demo Link]
+Try out Electrical Panel Label without any login:
+🔗 https://electrical-panel-label.vercel.app
+
+Simply click the link above or check out the "About" section on the right side of this GitHub page for quick access to
+the live application.
 
 ## Getting Started
 
