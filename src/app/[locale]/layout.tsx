@@ -8,6 +8,7 @@ import {TooltipProvider} from "@/app/ui/shadcn/tooltip";
 import Header from "@/app/ui/Header";
 import ThemeWrapper from "@/app/components/ThemeWrapper";
 import dynamic from 'next/dynamic';
+import {Analytics} from '@vercel/analytics/react';
 
 const DynamicSessionProvider = dynamic(
     () => import('@/app/contexts/SessionContext').then(mod => mod.SessionProvider),
@@ -39,6 +40,7 @@ export default async function LocaleLayout({
                         <main className="min-h-screen max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
                             <Header/>
                             {children}
+                            <Analytics/>
                         </main>
                     </DynamicSessionProvider>
                 </TooltipProvider>
