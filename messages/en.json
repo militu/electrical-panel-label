@@ -115,7 +115,7 @@
     "bottomSettings": "Bottom banner settings"
   },
   "GlobalSettingsForm": {
-    "welcomeMessage": "Global Settings",
+    "title": "Global Settings",
     "unitSettings": "Module",
     "unitHeight": "Height (mm)",
     "unitHeightTooltip": "Height of a module in mm",

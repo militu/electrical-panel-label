@@ -115,7 +115,7 @@
     "bottomSettings": "Paramètres du bandeau inférieur"
   },
   "GlobalSettingsForm": {
-    "welcomeMessage": "Paramètres globaux",
+    "title": "Paramètres globaux",
     "unitSettings": "Module",
     "unitHeight": "Hauteur (mm)",
     "unitHeightTooltip": "Hauteur d'un module en mm",
