@@ -203,26 +203,33 @@ const RowContainer: React.FC<RowContainerProps> = ({rowIndex, units, onUpdate}) 
                     </div>
                 )}
             </div>
+
             <Dialog open={!!editingUnit} onOpenChange={() => setEditingUnit(null)}>
-                <DialogContent className={"max-w-fit"}>
-                    {editingUnit && (
-                        <UnitForm
-                            unit={editingUnit}
-                            onSubmit={handleUpdateUnit}
-                            onDelete={() => handleDeleteUnit(editingUnit.id)}
-                            onCancel={() => setEditingUnit(null)}
-                        />
-                    )}
+                <DialogContent
+                    className="w-11/12 max-w-[1200px] h-[95vh] max-h-[95vh] p-0 flex flex-col rounded-lg overflow-hidden">
+                    <div
+                        className="flex-grow overflow-auto p-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                        {editingUnit && (
+                            <UnitForm
+                                unit={editingUnit}
+                                onSubmit={handleUpdateUnit}
+                                onDelete={() => handleDeleteUnit(editingUnit.id)}
+                                onCancel={() => setEditingUnit(null)}
+                            />
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={editingMultipleUnits.length > 0} onOpenChange={() => setEditingMultipleUnits([])}>
-                <DialogContent className={"max-w-fit"}>
-                    <MultiUnitForm
-                        units={editingMultipleUnits}
-                        onSubmit={handleUpdateMultipleUnits}
-                        onCancel={() => setEditingMultipleUnits([])}
-                    />
+                <DialogContent className="max-w-5xl w-[70vw] h-[95vh] max-h-[95vh] p-0 overflow-hidden">
+                    <div className="h-full overflow-auto p-6">
+                        <MultiUnitForm
+                            units={editingMultipleUnits}
+                            onSubmit={handleUpdateMultipleUnits}
+                            onCancel={() => setEditingMultipleUnits([])}
+                        />
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

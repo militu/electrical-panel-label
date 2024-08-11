@@ -31,10 +31,22 @@ class SVGService {
      * @returns A promise that resolves to the SVG string
      */
     public async createUnitSvg(unit: Unit): Promise<string> {
-        const size = 300;
-        const svgContent = `<svg xmlns="${SVG_NAMESPACE}" version="1.1" width="${size}" viewBox="0 0 ${this.mmToPixels(this.config.UNIT_WIDTH * unit.size)} ${this.mmToPixels(this.config.UNIT_HEIGHT)}">`;
-        let unitSvg = await this.createUnit(unit, 0, 0);
-        unitSvg += this.addCrosses(0, 0, this.config.UNIT_WIDTH * unit.size, this.config.UNIT_HEIGHT);
+        const padding = 5
+        const unitWidth = this.config.UNIT_WIDTH * unit.size;
+        const unitHeight = this.config.UNIT_HEIGHT;
+        const viewBoxWidth = this.mmToPixels(unitWidth + padding * 2);
+        const viewBoxHeight = this.mmToPixels(unitHeight + padding * 2);
+
+        const svgContent = `
+            <svg xmlns="${SVG_NAMESPACE}" version="1.1"
+                 viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}"
+                 width="100%" height="100%"
+                 preserveAspectRatio="xMidYMid meet">
+        `;
+
+        let unitSvg = await this.createUnit(unit, padding, padding);
+        unitSvg += this.addCrosses(padding, padding, unitWidth, unitHeight);
+
         return svgContent + unitSvg + '</svg>';
     }
 
