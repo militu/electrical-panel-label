@@ -87,6 +87,7 @@
     }
   },
   "UnitForm": {
+    "allowHalfSizes": "Allow half sizes",
     "preview": "Preview",
     "configurationTitle": "Module configuration",
     "previewOnLargeScreen": "Preview available on larger screens",
