@@ -87,6 +87,7 @@
     }
   },
   "UnitForm": {
+    "allowHalfSizes": "Autoriser les demi-tailles",
     "preview": "Aperçu",
     "configurationTitle": "Configuration du module",
     "previewOnLargeScreen": "Aperçu disponible sur écrans plus larges",
