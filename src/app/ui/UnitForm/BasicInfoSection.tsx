@@ -26,7 +26,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
 }) => {
   const t = useTranslations("UnitForm");
   const unsortedIconList = useTranslatedIconList();
-  const [allowHalfSizes, setAllowHalfSizes] = useState(false);
+  const [allowHalfSizes, setAllowHalfSizes] = useState(unit.allow_half_sizes);
 
   const iconList = [...unsortedIconList].sort((a, b) =>
     a.label.localeCompare(b.label, undefined, {
