@@ -252,5 +252,33 @@
     "ventilation": "Ventilation",
     "washing-machine": "Machine à laver",
     "water-heater": "Chauffe-eau"
+  },
+  "IconManager": {
+    "title": "Gestionnaire d'icônes",
+    "manageIcons": "Gérer les icônes",
+    "uploadNew": "Ajouter",
+    "manageExisting": "Gérer",
+    "uploadTitle": "Ajouter une nouvelle icône",
+    "uploadDescription": "Téléchargez un nouveau fichier SVG. Le fichier doit faire moins de 50 Ko et ne contenir que du contenu SVG valide.",
+    "customIcons": "Icônes personnalisées",
+    "customIconsDescription": "Gérez vos icônes personnalisées téléchargées",
+    "nameIn": "Nom en {locale}",
+    "namePlaceholder": "Entrez le nom de l'icône",
+    "upload": "Télécharger l'icône",
+    "uploading": "Téléchargement...",
+    "iconSaved": "Icône enregistrée avec succès",
+    "iconDeleted": "Icône supprimée avec succès",
+    "saveFailed": "Échec de l'enregistrement de l'icône",
+    "deleteFailed": "Échec de la suppression de l'icône",
+    "unknownError": "Une erreur inconnue s'est produite",
+    "invalidFileType": "Type de fichier invalide",
+    "svgOnly": "Seuls les fichiers SVG sont autorisés",
+    "missingFields": "Veuillez remplir tous les champs requis",
+    "invalidSvg": "Fichier SVG invalide",
+    "fileTooLarge": "Fichier trop volumineux",
+    "maxSize50KB": "La taille maximale du fichier est de 50 Ko",
+    "svgRequirements": "Exigences SVG :",
+    "svgRequirementsDetails": "Le fichier doit peser moins de 50 Ko.<br/>Le SVG doit être simple et centré.<br/>Idéalement, utilisez une taille de viewBox de 24x24.<br/>Supprimez tous les éléments ou groupes inutiles.",
+    "svgWillBeNormalized": "Le SVG sera normalisé"
   }
 }

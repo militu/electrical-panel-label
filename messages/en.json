@@ -252,5 +252,33 @@
     "ventilation": "Ventilation",
     "washing-machine": "Washing machine",
     "water-heater": "Water heater"
+  },
+  "IconManager": {
+    "title": "Icon Manager",
+    "manageIcons": "Manage Icons",
+    "uploadNew": "Upload New",
+    "manageExisting": "Manage Existing",
+    "uploadTitle": "Upload New Icon",
+    "uploadDescription": "Upload a new SVG icon file. The file should be less than 50KB and contain only valid SVG content.",
+    "customIcons": "Custom Icons",
+    "customIconsDescription": "Manage your uploaded custom icons",
+    "nameIn": "Name in {locale}",
+    "namePlaceholder": "Enter icon name",
+    "upload": "Upload Icon",
+    "uploading": "Uploading...",
+    "iconSaved": "Icon saved successfully",
+    "iconDeleted": "Icon deleted successfully",
+    "saveFailed": "Failed to save icon",
+    "deleteFailed": "Failed to delete icon",
+    "unknownError": "An unknown error occurred",
+    "invalidFileType": "Invalid file type",
+    "svgOnly": "Only SVG files are allowed",
+    "missingFields": "Please fill in all required fields",
+    "invalidSvg": "Invalid SVG file",
+    "fileTooLarge": "File too large",
+    "maxSize50KB": "Maximum file size is 50KB",
+    "svgRequirements": "SVG Requirements:",
+    "svgRequirementsDetails": "File should be less than 50KB.<br/>SVG should be simple and centered.<br/>Ideally use 24x24 viewBox size.<br/>Remove any unnecessary elements or groups.",
+    "svgWillBeNormalized": "SVGs will be automatically normalized to fit properly"
   }
 }
