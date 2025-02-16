@@ -10,7 +10,8 @@ electrical panel.
 ## Features
 
 - Create and manage multiple module rows
-- Customize each module with icons, colors, and descriptions
+- Customize each module with built-in and custom icons, colors, and descriptions
+- Upload and manage your own SVG icons
 - Reorganize modules using drag and drop
 - Save and load work sessions
 - Generate print-ready SVG labels

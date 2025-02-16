@@ -1,34 +1,40 @@
-import React from 'react';
-import { useTranslations } from 'next-intl';
-import { toast } from "@/app/ui/shadcn/use-toast";
 import { Button } from "@/app/ui/shadcn/button";
+import { toast } from "@/app/ui/shadcn/use-toast";
+import { useTranslations } from "next-intl";
+import React from "react";
 
 interface PrintButtonProps {
-    svgContent: string;
-    className?: string;
-    config: {
-        PAGE_WIDTH: number;
-        PAGE_HEIGHT: number;
-    };
+  svgContent: string;
+  className?: string;
+  config: {
+    PAGE_WIDTH: number;
+    PAGE_HEIGHT: number;
+  };
 }
 
-const PrintButton: React.FC<PrintButtonProps> = ({ svgContent, className, config }) => {
-    const t = useTranslations('PrintButton');
+const PrintButton: React.FC<PrintButtonProps> = ({
+  svgContent,
+  className,
+  config,
+}) => {
+  const t = useTranslations("PrintButton");
 
-    const handlePrint = () => {
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-            const parser = new DOMParser();
-            const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-            const svgElement = svgDoc.documentElement;
-            const width = svgElement.getAttribute('width') || `${config.PAGE_WIDTH}mm`;
-            const height = svgElement.getAttribute('height') || `${config.PAGE_HEIGHT}mm`;
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
+      const svgElement = svgDoc.documentElement;
+      const width =
+        svgElement.getAttribute("width") || `${config.PAGE_WIDTH}mm`;
+      const height =
+        svgElement.getAttribute("height") || `${config.PAGE_HEIGHT}mm`;
 
-            printWindow.document.write(`
+      printWindow.document.write(`
         <!DOCTYPE html>
         <html>
           <head>
-            <title>${t('printTitle')}</title>
+            <title>${t("printTitle")}</title>
             <style>
               @page {
                 size: ${config.PAGE_WIDTH}mm ${config.PAGE_HEIGHT}mm;
@@ -67,29 +73,26 @@ const PrintButton: React.FC<PrintButtonProps> = ({ svgContent, className, config
           </body>
         </html>
       `);
-            printWindow.document.close();
+      printWindow.document.close();
 
-            printWindow.onafterprint = () => {
-                printWindow.close();
-            };
-        } else {
-            toast({
-                title: t('printFailed'),
-                description: t('printWindowBlocked'),
-                variant: "destructive",
-                duration: 3000,
-            });
-        }
-    };
+      printWindow.onafterprint = () => {
+        printWindow.close();
+      };
+    } else {
+      toast({
+        title: t("printFailed"),
+        description: t("printWindowBlocked"),
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
 
-    return (
-        <Button
-            onClick={handlePrint}
-            className={className}
-        >
-            {t('printSVG')}
-        </Button>
-    );
+  return (
+    <Button onClick={handlePrint} className={className}>
+      {t("printSVG")}
+    </Button>
+  );
 };
 
 export default PrintButton;
