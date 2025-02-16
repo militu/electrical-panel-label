@@ -282,7 +282,8 @@
     "deleteFailed": "Failed to delete icon",
     "unknownError": "An unknown error occurred",
     "error": "Error",
-    "svgOnly": "Only SVG files are allowed"
+    "svgOnly": "Only SVG files are allowed",
+    "fileReadError": "Failed to read the file"
   }
 }
   

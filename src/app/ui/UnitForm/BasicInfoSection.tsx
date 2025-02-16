@@ -1,5 +1,5 @@
+// src/app/components/BasicInfoSection.tsx
 import { useTranslatedIconList } from "@/app/hooks/useTranslatedIconList";
-import { IconName } from "@/app/types/Icon";
 import { Unit } from "@/app/types/Unit";
 import { Checkbox } from "@/app/ui/shadcn/checkbox";
 import { Input } from "@/app/ui/shadcn/input";
@@ -13,7 +13,7 @@ import {
 import { FormField } from "@/app/ui/UnitForm/FormField";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState } from "react"; // Import useMemo
 
 interface BasicInfoSectionProps {
   unit: Unit;
@@ -43,7 +43,19 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   };
 
   const handleLogoChange = (value: string) => {
-    onChange({ logo: value === "__NO_ICON__" ? null : (value as IconName) });
+    // Find the selected icon to check if it's custom
+    const selectedIcon = iconList.find((icon) => icon.value === value);
+
+    if (selectedIcon && selectedIcon.isCustom) {
+      // For custom icons, send the ID
+      onChange({ logo: value, logoData: selectedIcon.dataUrl });
+    } else {
+      // For built-in icons or no icon, send the value (filename or "__NO_ICON__")
+      onChange({
+        logo: value === "__NO_ICON__" ? null : value,
+        logoData: undefined,
+      });
+    }
   };
 
   const handleHalfSizesChange = (checked: boolean) => {
@@ -97,13 +109,23 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             {iconList.map((icon) => (
               <SelectItem key={icon.value} value={icon.value}>
                 <div className="flex items-center">
-                  <Image
-                    src={`/icons/${icon.value}.svg`}
-                    width={16}
-                    height={16}
-                    alt={icon.label}
-                    className="mr-2"
-                  />
+                  {icon.isCustom ? (
+                    <Image
+                      src={icon.dataUrl}
+                      width={16}
+                      height={16}
+                      alt={icon.label}
+                      className="mr-2"
+                    />
+                  ) : (
+                    <Image
+                      src={`/icons/${icon.value}.svg`}
+                      width={16}
+                      height={16}
+                      alt={icon.label}
+                      className="mr-2"
+                    />
+                  )}
                   {icon.label}
                 </div>
               </SelectItem>

@@ -1,5 +1,4 @@
 // src/app/hooks/useCustomIcons.ts
-
 import { useCallback, useEffect, useState } from "react";
 import {
   CustomIconError,
@@ -11,7 +10,11 @@ export interface UseCustomIconsResult {
   icons: CustomIcon[];
   isLoading: boolean;
   error: Error | null;
-  addIcon: (icon: Omit<CustomIcon, "id" | "dateAdded">) => Promise<CustomIcon>;
+  addIcon: (
+    icon: Omit<CustomIcon, "id" | "dateAdded" | "fileName"> & {
+      dataUrl: string;
+    }
+  ) => Promise<CustomIcon>; // Modified
   updateIcon: (id: string, updates: Partial<CustomIcon>) => Promise<CustomIcon>;
   deleteIcon: (id: string) => Promise<void>;
   refreshIcons: () => void;
@@ -52,7 +55,12 @@ export function useCustomIcons(): UseCustomIconsResult {
   }, [loadIcons]);
 
   const addIcon = useCallback(
-    async (icon: Omit<CustomIcon, "id" | "dateAdded">): Promise<CustomIcon> => {
+    async (
+      icon: Omit<CustomIcon, "id" | "dateAdded" | "fileName"> & {
+        dataUrl: string;
+      }
+    ): Promise<CustomIcon> => {
+      // Modified type
       try {
         return customIconManager.addIcon(icon);
       } catch (err) {

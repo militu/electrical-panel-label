@@ -282,6 +282,7 @@
     "deleteFailed": "Échec de la suppression de l'icône",
     "unknownError": "Une erreur inconnue s'est produite",
     "error": "Erreur",
-    "svgOnly": "Seuls les fichiers SVG sont autorisés"
+    "svgOnly": "Seuls les fichiers SVG sont autorisés",
+    "fileReadError": "Impossible de lire le fichier"
   }
 }

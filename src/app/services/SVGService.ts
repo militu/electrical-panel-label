@@ -1,3 +1,5 @@
+// src/app/services/SVGService.ts
+
 import { GlobalSettings } from "@/app/types/GlobalSettings";
 import { Unit } from "@/app/types/Unit";
 import * as fs from "fs/promises";
@@ -237,7 +239,6 @@ class SVGService {
     const unitHeight = this.config.UNIT_HEIGHT;
     const viewBoxWidth = this.mmToPixels(unitWidth + padding * 2);
     const viewBoxHeight = this.mmToPixels(unitHeight + padding * 2);
-
     const svgContent = `
       <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
            viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}"
@@ -418,7 +419,14 @@ class SVGService {
 
     // Logo
     if (unit.logo) {
-      content += await this.addLogo(x, y, unitWidth, unitHeight / 2, unit.logo);
+      content += await this.addLogo(
+        x,
+        y,
+        unitWidth,
+        unitHeight / 2,
+        unit.logo,
+        unit.logoData
+      );
     }
 
     // Bottom rectangle
@@ -485,6 +493,7 @@ class SVGService {
    * @param containerWidth The width of the logo container.
    * @param containerHeight The height of the logo container.
    * @param logoName The name of the logo file.
+   * @param logoData The base64 of custom icons.
    * @returns A promise that resolves to the SVG string for the logo.
    */
   private async addLogo(
@@ -492,7 +501,8 @@ class SVGService {
     y: number,
     containerWidth: number,
     containerHeight: number,
-    logoName: string
+    logoName: string,
+    logoData?: string
   ): Promise<string> {
     try {
       const logoWidth = Math.min(containerWidth, containerHeight) * 0.95;
@@ -500,8 +510,8 @@ class SVGService {
       const logoX = x + (containerWidth - logoWidth) / 2;
       const logoY = y + (containerHeight - logoHeight) / 2;
 
-      const svgContent = await this.fetchSvgContent(logoName);
-      // Use transformSvg instead of the old resizeAndPositionPixelSvg
+      // Use fetchSvgContent, which now handles both cases
+      const svgContent = await this.fetchSvgContent(logoName, logoData);
       return await this.transformSvg(
         svgContent,
         logoWidth,
@@ -520,26 +530,45 @@ class SVGService {
    * @param iconName The name of the icon file.
    * @returns A promise that resolves to the SVG content string.
    */
-  private async fetchSvgContent(iconName: string): Promise<string> {
-    const filePath = path.join(
-      process.cwd(),
-      "public",
-      "icons",
-      `${iconName}.svg`
-    );
-    return await fs.readFile(filePath, "utf-8");
+  private async fetchSvgContent(
+    iconName: string,
+    dataUrl?: string
+  ): Promise<string> {
+    if (dataUrl) {
+      // Custom icon: Use the provided dataUrl
+      return this.extractSvgFromDataUrl(dataUrl);
+    } else {
+      // Built-in icon: Fetch from the filesystem
+      const filePath = path.join(
+        process.cwd(),
+        "public",
+        "icons",
+        `${iconName}.svg`
+      );
+      try {
+        return await fs.readFile(filePath, "utf-8");
+      } catch (error) {
+        console.error(`Error loading built-in icon '${iconName}':`, error);
+        return ""; // Or a placeholder SVG
+      }
+    }
   }
 
-  /**
-   * Adds a description (text) to the SVG content.
-   * @param x The x coordinate of the text.
-   * @param y The y coordinate of the text.
-   * @param text The text content.
-   * @param containerHeight The height of the text container.
-   * @param fill The fill color of the text.
-   * @param fontSize The font size of the text.
-   * @returns The SVG string for the text.
-   */
+  private extractSvgFromDataUrl(dataUrl: string): string {
+    const base64Data = dataUrl.split(",")[1];
+    if (!base64Data) {
+      console.error("Invalid data URL format:", dataUrl);
+      return ""; // Return empty string or a placeholder SVG
+    }
+    try {
+      const decodedSvg = Buffer.from(base64Data, "base64").toString("utf-8");
+      return decodedSvg;
+    } catch (error) {
+      console.error("Error decoding base64 data:", error);
+      return ""; // Return empty or placeholder
+    }
+  }
+
   private addDescription(
     x: number,
     y: number,

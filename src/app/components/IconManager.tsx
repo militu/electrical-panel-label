@@ -111,35 +111,33 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
       setIsUploading(true);
 
       try {
-        // Upload file to server
-        const formData = new FormData();
-        formData.append("file", newIcon.file);
-        formData.append("name", newIcon.name);
-        formData.append("translations", JSON.stringify(newIcon.translations));
+        // Convert the file to a Data URL (Base64)
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          if (event.target && typeof event.target.result === "string") {
+            const dataUrl = event.target.result;
 
-        const response = await fetch("/api/save-icon", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to save icon");
-        }
-
-        const savedIcon = await response.json();
-
-        // Add to local storage
-        await addIcon({
-          name: newIcon.name,
-          translations: newIcon.translations,
-          fileName: savedIcon.fileName,
-          isCustom: true,
-        });
-
-        toast({ title: t("iconSaved") });
-        resetForm();
-        onIconsChange?.();
+            // Add to local storage via the hook
+            await addIcon({
+              name: newIcon.name,
+              translations: newIcon.translations,
+              dataUrl: dataUrl, // Pass the data URL
+              isCustom: true,
+            });
+            toast({ title: t("iconSaved") });
+            resetForm();
+            onIconsChange?.();
+          }
+        };
+        reader.onerror = () => {
+          toast({
+            title: t("saveFailed"),
+            description: t("fileReadError"), // You'll need to add this translation
+            variant: "destructive",
+          });
+          setIsUploading(false); // Ensure loading state is reset
+        };
+        reader.readAsDataURL(newIcon.file);
       } catch (error) {
         toast({
           title: t("saveFailed"),
@@ -148,41 +146,31 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
           variant: "destructive",
         });
       } finally {
-        setIsUploading(false);
+        setIsUploading(false); // Make sure to set this even on success within the onload
       }
     },
-    [newIcon, addIcon, onIconsChange, resetForm, t]
+    [newIcon, addIcon, onIconsChange, resetForm, t, currentLocale]
   );
 
-  const handleDeleteIcon = async (icon: CustomIcon) => {
-    try {
-      // Delete file from server
-      const response = await fetch("/api/save-icon", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ fileName: icon.fileName, iconId: icon.id }),
-      });
+  const handleDeleteIcon = useCallback(
+    async (icon: CustomIcon) => {
+      try {
+        await deleteIcon(icon.id);
+        setIconToDelete(null);
 
-      if (!response.ok) {
-        throw new Error("Failed to delete icon file");
+        toast({ title: t("iconDeleted") });
+        onIconsChange?.();
+      } catch (error) {
+        toast({
+          title: t("deleteFailed"),
+          description:
+            error instanceof Error ? error.message : t("unknownError"),
+          variant: "destructive",
+        });
       }
-
-      // Delete from local storage
-      await deleteIcon(icon.id);
-      setIconToDelete(null);
-
-      toast({ title: t("iconDeleted") });
-      onIconsChange?.();
-    } catch (error) {
-      toast({
-        title: t("deleteFailed"),
-        description: error instanceof Error ? error.message : t("unknownError"),
-        variant: "destructive",
-      });
-    }
-  };
+    },
+    [deleteIcon, onIconsChange, t]
+  );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -305,7 +293,7 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
                         <div className="border rounded-lg p-4 hover:bg-accent transition-colors">
                           <div className="relative w-16 h-16 mx-auto mb-2">
                             <Image
-                              src={`/icons/${icon.fileName}.svg`}
+                              src={icon.dataUrl!}
                               alt={
                                 icon.translations[currentLocale] || icon.name
                               }

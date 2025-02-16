@@ -69,27 +69,27 @@ export class CustomIconManager {
   }
 
   public getIcon(id: string): CustomIcon | undefined {
+    console.log("IN GET ICON", this.icons);
     return this.icons.find((icon) => icon.id === id);
   }
 
-  public addIcon(icon: Omit<CustomIcon, "id" | "dateAdded">): CustomIcon {
+  public addIcon(
+    icon: Omit<CustomIcon, "id" | "dateAdded" | "fileName"> & {
+      dataUrl: string;
+    }
+  ): CustomIcon {
+    // Modified type and parameter
     if (!this.initialized) this.init();
 
-    // Validate icon data
-    if (!icon.name || !icon.fileName || !icon.translations) {
+    // Validate icon data (keep name and translations, remove fileName)
+    if (!icon.name || !icon.translations || !icon.dataUrl) {
+      // Added dataUrl validation
       throw new CustomIconError(
         "Invalid icon data: missing required fields",
         "VALIDATION_ERROR"
       );
     }
-
-    // Check for duplicate file names
-    if (this.icons.some((existing) => existing.fileName === icon.fileName)) {
-      throw new CustomIconError(
-        "An icon with this file name already exists",
-        "DUPLICATE_ERROR"
-      );
-    }
+    // No duplicate check needed (localStorage handles overwriting)
 
     const newIcon: CustomIcon = {
       ...icon,
@@ -110,8 +110,14 @@ export class CustomIconManager {
       throw new CustomIconError("Icon not found", "NOT_FOUND_ERROR");
     }
 
-    // Prevent updating immutable fields
-    const { id: _, dateAdded: __, isCustom: ___, ...validUpdates } = updates;
+    // Prevent updating immutable fields: id, dateAdded, isCustom, AND dataUrl
+    const {
+      id: _,
+      dateAdded: __,
+      isCustom: ___,
+      dataUrl: ____,
+      ...validUpdates
+    } = updates;
 
     const updatedIcon = {
       ...this.icons[index],

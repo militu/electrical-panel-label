@@ -4,8 +4,8 @@ export interface CustomIcon {
   id: string;
   name: string;
   translations: Record<string, string>;
-  fileName: string;
-  isCustom: true;
+  dataUrl: string;
+  isCustom: boolean;
   dateAdded: string;
 }
 
