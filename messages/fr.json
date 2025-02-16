@@ -263,7 +263,7 @@
     "uploadDescription": "Téléchargez une nouvelle icône SVG personnalisée pour vos étiquettes de tableau électrique.",
     "svgRequirements": "Exigences SVG",
     "svgRequirementsDetails": "• Taille du fichier : max 50Ko<br/>• Format : SVG uniquement<br/>• Pas de scripts ni de gestionnaires d'événements<br/>• Graphiques vectoriels simples<br/>• Remplissage noir pour une meilleure compatibilité",
-    "nameIn": "Nom en {locale}",
+    "iconName": "Nom",
     "namePlaceholder": "Entrez le nom de l'icône",
     "uploading": "Téléchargement...",
     "upload": "Télécharger l'icône",

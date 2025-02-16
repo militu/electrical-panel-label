@@ -77,11 +77,7 @@ const IconManager: React.FC<IconManagerProps> = ({
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (
-        !newIcon.file ||
-        !newIcon.name ||
-        Object.keys(newIcon.translations).length === 0
-      ) {
+      if (!newIcon.file || !newIcon.name) {
         toast({ title: t("missingFields"), variant: "destructive" });
         return;
       }
@@ -153,7 +149,7 @@ const IconManager: React.FC<IconManagerProps> = ({
         setIsUploading(false);
       }
     },
-    [newIcon, addIcon, onIconsChange, resetForm, t, currentLocale]
+    [newIcon, addIcon, onIconsChange, resetForm, t]
   );
 
   const handleDeleteIcon = useCallback(
@@ -190,16 +186,6 @@ const IconManager: React.FC<IconManagerProps> = ({
     }
 
     setNewIcon((prev) => ({ ...prev, file }));
-  };
-
-  const handleNameChange = (locale: string, value: string) => {
-    if (locale === currentLocale) {
-      setNewIcon((prev) => ({ ...prev, name: value }));
-    }
-    setNewIcon((prev) => ({
-      ...prev,
-      translations: { ...prev.translations, [locale]: value },
-    }));
   };
 
   if (error) {
@@ -255,20 +241,30 @@ const IconManager: React.FC<IconManagerProps> = ({
                     />
                   </div>
 
-                  {locales.map((locale) => (
-                    <div key={locale} className="space-y-2">
-                      <label className="text-sm font-medium">
-                        {t("nameIn", { locale: locale.toUpperCase() })}
-                      </label>
-                      <Input
-                        value={newIcon.translations[locale] || ""}
-                        onChange={(e) =>
-                          handleNameChange(locale, e.target.value)
-                        }
-                        placeholder={t("namePlaceholder")}
-                      />
-                    </div>
-                  ))}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      {t("iconName")}
+                    </label>
+                    <Input
+                      value={newIcon.name}
+                      onChange={(e) => {
+                        const name = e.target.value;
+                        // Update both name and translations with the same value
+                        setNewIcon((prev) => ({
+                          ...prev,
+                          name,
+                          translations: locales.reduce(
+                            (acc, locale) => ({
+                              ...acc,
+                              [locale]: name,
+                            }),
+                            {}
+                          ),
+                        }));
+                      }}
+                      placeholder={t("namePlaceholder")}
+                    />
+                  </div>
 
                   <Button type="submit" disabled={isUploading}>
                     {isUploading && (

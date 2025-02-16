@@ -263,7 +263,7 @@
     "uploadDescription": "Upload a new custom SVG icon for your electrical panel labels.",
     "svgRequirements": "SVG Requirements",
     "svgRequirementsDetails": "• File size: max 50KB<br/>• Format: SVG only<br/>• No scripts or event handlers<br/>• Simple vector graphics<br/>• Black fill for best compatibility",
-    "nameIn": "Name in {locale}",
+    "iconName": "Name",
     "namePlaceholder": "Enter icon name",
     "uploading": "Uploading...",
     "upload": "Upload Icon",
