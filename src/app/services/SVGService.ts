@@ -108,6 +108,11 @@ class SVGService {
       },
     ],
   };
+
+  /**
+   * Constructs an SVGService instance.
+   * @param config The global settings object.
+   */
   constructor(config: GlobalSettings) {
     this.config = config;
     this.currentX = this.config.BORDER_MARGIN;
@@ -118,6 +123,11 @@ class SVGService {
     this.pages = [];
   }
 
+  /**
+   * Optimizes an SVG string using SVGO.
+   * @param svgContent The SVG content to optimize.
+   * @returns A promise that resolves to the optimized SVG string.
+   */
   private async optimizeSvg(svgContent: string): Promise<string> {
     try {
       const result = optimize(svgContent, this.svgoConfig);
@@ -128,11 +138,26 @@ class SVGService {
     }
   }
 
+  /**
+   * Converts millimeters to pixels.
+   * @param mm The value in millimeters.
+   * @param dpi The DPI value (default: 96).
+   * @returns The equivalent value in pixels.
+   */
   private mmToPixels(mm: number, dpi: number = 96): number {
     const inches = mm / 25.4;
     return inches * dpi;
   }
 
+  /**
+   * Transforms an SVG string by scaling and positioning it.
+   * @param svgContent The SVG content to transform.
+   * @param widthMm The target width in millimeters.
+   * @param heightMm The target height in millimeters.
+   * @param xMm The target x position in millimeters.
+   * @param yMm The target y position in millimeters.
+   * @returns A promise that resolves to the transformed SVG string.
+   */
   private async transformSvg(
     svgContent: string,
     widthMm: number,
@@ -203,6 +228,8 @@ class SVGService {
   }
   /**
    * Creates an SVG for a single unit, mainly used for preview purposes.
+   * @param unit The unit to create the SVG for.
+   * @returns A promise that resolves to the SVG string.
    */
   public async createUnitSvg(unit: Unit): Promise<string> {
     const padding = 5;
@@ -226,8 +253,8 @@ class SVGService {
 
   /**
    * Creates an SVG containing all units arranged in rows and pages.
-   * @param rows An array of arrays, each containing Unit objects
-   * @returns A promise that resolves to the complete SVG string
+   * @param rows An array of arrays, each containing Unit objects.
+   * @returns A promise that resolves to the complete SVG string.
    */
   public async createSvg(rows: Unit[][]): Promise<string> {
     this.pages = [];
@@ -267,8 +294,8 @@ class SVGService {
 
   /**
    * Adds a unit to the current page and updates coordinates.
-   * @param unit The unit to add
-   * @returns A promise that resolves to the SVG string for the unit
+   * @param unit The unit to add.
+   * @returns A promise that resolves to the SVG string for the unit.
    */
   private async addUnit(unit: Unit): Promise<string> {
     const unitWidth = this.config.UNIT_WIDTH * unit.size;
@@ -286,8 +313,8 @@ class SVGService {
 
   /**
    * Checks if a new row is needed based on the current X position and the unit width.
-   * @param unit The unit to be added
-   * @returns True if a new row is needed, false otherwise
+   * @param unit The unit to be added.
+   * @returns True if a new row is needed, false otherwise.
    */
   private needNewRow(unit: Unit): boolean {
     const unitWidth = this.config.UNIT_WIDTH * unit.size;
@@ -299,7 +326,7 @@ class SVGService {
 
   /**
    * Checks if a new page is needed based on the current Y position.
-   * @returns True if a new page is needed, false otherwise
+   * @returns True if a new page is needed, false otherwise.
    */
   private needNewPage(): boolean {
     return (
@@ -321,7 +348,7 @@ class SVGService {
 
   /**
    * Finalizes the current page by adding it to the pages array and resetting coordinates.
-   * @param content The SVG content of the current page
+   * @param content The SVG content of the current page.
    */
   private finalizePage(content: string): void {
     this.pages.push(content);
@@ -330,7 +357,7 @@ class SVGService {
 
   /**
    * Wraps all pages in a single SVG document.
-   * @returns The complete SVG string containing all pages
+   * @returns The complete SVG string containing all pages.
    */
   private wrapPagesInSingleSvg(): string {
     const pageWidth = this.config.PAGE_WIDTH;
@@ -366,6 +393,13 @@ class SVGService {
     this.maxX = this.config.BORDER_MARGIN;
   }
 
+  /**
+   * Creates the SVG content for a single unit.
+   * @param unit The unit to create the SVG for.
+   * @param x The x coordinate of the unit.
+   * @param y The y coordinate of the unit.
+   * @returns A promise that resolves to the SVG string for the unit.
+   */
   private async createUnit(unit: Unit, x: number, y: number): Promise<string> {
     const unitWidth = Number(this.config.UNIT_WIDTH * unit.size);
     const unitHeight = Number(this.config.UNIT_HEIGHT);
@@ -421,6 +455,16 @@ class SVGService {
     return content;
   }
 
+  /**
+   * Adds a rectangle to the SVG content.
+   * @param x The x coordinate of the rectangle.
+   * @param y The y coordinate of the rectangle.
+   * @param width The width of the rectangle.
+   * @param height The height of the rectangle.
+   * @param fill The fill color of the rectangle.
+   * @param stroke The stroke color of the rectangle (optional).
+   * @returns The SVG string for the rectangle.
+   */
   private addRectangle(
     x: number,
     y: number,
@@ -434,6 +478,15 @@ class SVGService {
     } />`;
   }
 
+  /**
+   * Adds a logo to the SVG content.
+   * @param x The x coordinate of the logo container.
+   * @param y The y coordinate of the logo container.
+   * @param containerWidth The width of the logo container.
+   * @param containerHeight The height of the logo container.
+   * @param logoName The name of the logo file.
+   * @returns A promise that resolves to the SVG string for the logo.
+   */
   private async addLogo(
     x: number,
     y: number,
@@ -462,6 +515,11 @@ class SVGService {
     }
   }
 
+  /**
+   * Fetches the SVG content from a file.
+   * @param iconName The name of the icon file.
+   * @returns A promise that resolves to the SVG content string.
+   */
   private async fetchSvgContent(iconName: string): Promise<string> {
     const filePath = path.join(
       process.cwd(),
@@ -472,6 +530,16 @@ class SVGService {
     return await fs.readFile(filePath, "utf-8");
   }
 
+  /**
+   * Adds a description (text) to the SVG content.
+   * @param x The x coordinate of the text.
+   * @param y The y coordinate of the text.
+   * @param text The text content.
+   * @param containerHeight The height of the text container.
+   * @param fill The fill color of the text.
+   * @param fontSize The font size of the text.
+   * @returns The SVG string for the text.
+   */
   private addDescription(
     x: number,
     y: number,
@@ -504,6 +572,11 @@ class SVGService {
     `;
   }
 
+  /**
+   * Escapes special characters in a string for XML/SVG.
+   * @param unsafe The string to escape.
+   * @returns The escaped string.
+   */
   private escapeXml(unsafe: string): string {
     return unsafe.replace(/[<>&'"]/g, (c) => {
       switch (c) {
@@ -522,6 +595,10 @@ class SVGService {
     });
   }
 
+  /**
+   * Adds crosses at the corners of a row.
+   * @returns The SVG string for the crosses.
+   */
   private addRowCrosses(): string {
     return this.addCrosses(
       this.rowStartX,
@@ -531,6 +608,14 @@ class SVGService {
     );
   }
 
+  /**
+   * Adds crosses at the corners of a rectangle.
+   * @param x The x coordinate of the rectangle.
+   * @param y The y coordinate of the rectangle.
+   * @param width The width of the rectangle.
+   * @param height The height of the rectangle.
+   * @returns The SVG string for the crosses.
+   */
   private addCrosses(
     x: number,
     y: number,
@@ -545,6 +630,12 @@ class SVGService {
     );
   }
 
+  /**
+   * Adds a single cross to the SVG content.
+   * @param x The x coordinate of the cross.
+   * @param y The y coordinate of the cross.
+   * @returns The SVG string for the cross.
+   */
   private addCross(x: number, y: number): string {
     const halfSize = this.config.CROSS_SIZE / 2;
     return (
