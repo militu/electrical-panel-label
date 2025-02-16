@@ -1,8 +1,9 @@
 import { GlobalSettings } from "@/app/types/GlobalSettings";
 import { Unit } from "@/app/types/Unit";
 import * as fs from "fs/promises";
-import { JSDOM } from "jsdom";
 import * as path from "path";
+import { Config, optimize } from "svgo";
+import { XastElement, XastParent } from "svgo/lib/types";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
@@ -15,6 +16,98 @@ class SVGService {
   private maxX: number;
   private pages: string[];
 
+  // SVGO configuration
+
+  private svgoConfig: Config = {
+    plugins: [
+      {
+        name: "preset-default",
+        params: {
+          overrides: {
+            removeViewBox: false,
+          },
+        },
+      },
+      {
+        name: "convertStyleToAttrs",
+      },
+      {
+        name: "removeUselessStrokeAndFill",
+        params: {
+          removeNone: false,
+        },
+      },
+      {
+        name: "convertColors",
+        params: {
+          currentColor: true,
+          names2hex: false,
+          rgb2hex: true,
+          shorthex: false,
+        },
+      },
+      {
+        name: "cleanupIds",
+        params: {
+          remove: false,
+        },
+      },
+      {
+        name: "prefixIds",
+        params: {
+          prefix: false,
+        },
+      },
+      {
+        name: "customAttributeInheritance",
+        fn: () => ({
+          element: {
+            enter: (node: XastElement, parentNode: XastParent) => {
+              if (node.type === "element") {
+                const parent = parentNode as XastElement;
+                if (parent?.type === "element" && parent.attributes?.stroke) {
+                  if (!node.attributes.stroke) {
+                    node.attributes.stroke = parent.attributes.stroke;
+                  }
+                  if (
+                    !node.attributes["stroke-width"] &&
+                    parent.attributes["stroke-width"]
+                  ) {
+                    node.attributes["stroke-width"] =
+                      parent.attributes["stroke-width"];
+                  }
+                  if (
+                    !node.attributes["stroke-linecap"] &&
+                    parent.attributes["stroke-linecap"]
+                  ) {
+                    node.attributes["stroke-linecap"] =
+                      parent.attributes["stroke-linecap"];
+                  }
+                  if (
+                    !node.attributes["stroke-linejoin"] &&
+                    parent.attributes["stroke-linejoin"]
+                  ) {
+                    node.attributes["stroke-linejoin"] =
+                      parent.attributes["stroke-linejoin"];
+                  }
+                }
+
+                // Preserve fill="none" when it's set in parent
+                if (
+                  parent?.type === "element" &&
+                  parent.attributes?.fill === "none"
+                ) {
+                  if (!node.attributes.fill) {
+                    node.attributes.fill = "none";
+                  }
+                }
+              }
+            },
+          },
+        }),
+      },
+    ],
+  };
   constructor(config: GlobalSettings) {
     this.config = config;
     this.currentX = this.config.BORDER_MARGIN;
@@ -25,10 +118,91 @@ class SVGService {
     this.pages = [];
   }
 
+  private async optimizeSvg(svgContent: string): Promise<string> {
+    try {
+      const result = optimize(svgContent, this.svgoConfig);
+      return result.data;
+    } catch (error) {
+      console.error("Error optimizing SVG:", error);
+      return svgContent;
+    }
+  }
+
+  private mmToPixels(mm: number, dpi: number = 96): number {
+    const inches = mm / 25.4;
+    return inches * dpi;
+  }
+
+  private async transformSvg(
+    svgContent: string,
+    widthMm: number,
+    heightMm: number,
+    xMm: number,
+    yMm: number
+  ): Promise<string> {
+    try {
+      // First optimize the SVG
+      const optimizedSvg = await this.optimizeSvg(svgContent);
+
+      // Extract viewBox from optimized SVG
+      const viewBoxMatch = optimizedSvg.match(/viewBox=["']([^"']+)["']/);
+      let vbWidth, vbHeight;
+      let vbX = 0,
+        vbY = 0;
+
+      if (viewBoxMatch) {
+        const [x, y, w, h] = viewBoxMatch[1].split(/\s+/).map(Number);
+        vbX = x || 0;
+        vbY = y || 0;
+        vbWidth = w;
+        vbHeight = h;
+      } else {
+        // Default values if no viewBox found
+        vbWidth = parseFloat(
+          (svgContent.match(/width=["']([^"']+)["']/) || ["", "50"])[1].replace(
+            /[^\d.]/g,
+            ""
+          )
+        );
+        vbHeight = parseFloat(
+          (svgContent.match(/height=["']([^"']+)["']/) || [
+            "",
+            "50",
+          ])[1].replace(/[^\d.]/g, "")
+        );
+      }
+
+      // Calculate scale to fit the target dimensions while maintaining aspect ratio
+      const scaleX = this.mmToPixels(widthMm) / vbWidth;
+      const scaleY = this.mmToPixels(heightMm) / vbHeight;
+      const scale = Math.min(scaleX, scaleY);
+
+      // Calculate centering offsets
+      const scaledWidth = vbWidth * scale;
+      const scaledHeight = vbHeight * scale;
+      const xOffset =
+        this.mmToPixels(xMm) + (this.mmToPixels(widthMm) - scaledWidth) / 2;
+      const yOffset =
+        this.mmToPixels(yMm) + (this.mmToPixels(heightMm) - scaledHeight) / 2;
+
+      // Extract the inner content of the SVG
+      const contentMatch = optimizedSvg.match(/<svg[^>]*>([\s\S]*)<\/svg>/);
+      const innerContent = contentMatch ? contentMatch[1] : optimizedSvg;
+
+      // Create new transformed SVG with proper positioning and scaling
+      const transform = `translate(${xOffset},${yOffset}) scale(${scale})`;
+      if (vbX !== 0 || vbY !== 0) {
+        // If the original SVG had a non-zero viewBox origin, compensate for it
+        return `<g transform="${transform} translate(${-vbX},${-vbY})">${innerContent}</g>`;
+      }
+      return `<g transform="${transform}">${innerContent}</g>`;
+    } catch (error) {
+      console.error("Error transforming SVG:", error);
+      return "";
+    }
+  }
   /**
    * Creates an SVG for a single unit, mainly used for preview purposes.
-   * @param unit The unit to create an SVG for
-   * @returns A promise that resolves to the SVG string
    */
   public async createUnitSvg(unit: Unit): Promise<string> {
     const padding = 5;
@@ -38,16 +212,16 @@ class SVGService {
     const viewBoxHeight = this.mmToPixels(unitHeight + padding * 2);
 
     const svgContent = `
-            <svg xmlns="${SVG_NAMESPACE}" version="1.1"
-                 viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}"
-                 width="100%" height="100%"
-                 preserveAspectRatio="xMidYMid meet">
-        `;
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+           viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}"
+           width="100%" height="100%"
+           preserveAspectRatio="xMidYMid meet">
+    `;
 
-    let unitSvg = await this.createUnit(unit, padding, padding);
-    unitSvg += this.addCrosses(padding, padding, unitWidth, unitHeight);
+    const unitSvg = await this.createUnit(unit, padding, padding);
+    const crosses = this.addCrosses(padding, padding, unitWidth, unitHeight);
 
-    return svgContent + unitSvg + "</svg>";
+    return svgContent + unitSvg + crosses + "</svg>";
   }
 
   /**
@@ -146,28 +320,6 @@ class SVGService {
   }
 
   /**
-   * Converts millimeters to pixels.
-   * @param mm Millimeters to convert
-   * @param dpi Dots per inch (default: 96)
-   * @returns The equivalent number of pixels
-   */
-  private mmToPixels(mm: number, dpi: number = 96): number {
-    const inches = mm / 25.4;
-    return inches * dpi;
-  }
-
-  /**
-   * Converts pixels to millimeters.
-   * @param pixels Pixels to convert
-   * @param dpi Dots per inch (default: 96)
-   * @returns The equivalent number of millimeters
-   */
-  private pixelsToMm(pixels: number, dpi: number = 96): number {
-    const inches = pixels / dpi;
-    return inches * 25.4;
-  }
-
-  /**
    * Finalizes the current page by adding it to the pages array and resetting coordinates.
    * @param content The SVG content of the current page
    */
@@ -214,13 +366,6 @@ class SVGService {
     this.maxX = this.config.BORDER_MARGIN;
   }
 
-  /**
-   * Creates the SVG content for a single unit.
-   * @param unit The unit to create
-   * @param x The x-coordinate of the unit
-   * @param y The y-coordinate of the unit
-   * @returns A promise that resolves to the SVG string for the unit
-   */
   private async createUnit(unit: Unit, x: number, y: number): Promise<string> {
     const unitWidth = Number(this.config.UNIT_WIDTH * unit.size);
     const unitHeight = Number(this.config.UNIT_HEIGHT);
@@ -276,16 +421,6 @@ class SVGService {
     return content;
   }
 
-  /**
-   * Adds a rectangle to the SVG.
-   * @param x X-coordinate of the rectangle
-   * @param y Y-coordinate of the rectangle
-   * @param width Width of the rectangle
-   * @param height Height of the rectangle
-   * @param fill Fill color of the rectangle
-   * @param stroke Stroke color of the rectangle (optional)
-   * @returns The SVG string for the rectangle
-   */
   private addRectangle(
     x: number,
     y: number,
@@ -299,15 +434,6 @@ class SVGService {
     } />`;
   }
 
-  /**
-   * Adds a logo to the SVG.
-   * @param x X-coordinate of the logo container
-   * @param y Y-coordinate of the logo container
-   * @param containerWidth Width of the logo container
-   * @param containerHeight Height of the logo container
-   * @param logoName Name of the logo file
-   * @returns A promise that resolves to the SVG string for the logo
-   */
   private async addLogo(
     x: number,
     y: number,
@@ -322,7 +448,8 @@ class SVGService {
       const logoY = y + (containerHeight - logoHeight) / 2;
 
       const svgContent = await this.fetchSvgContent(logoName);
-      return this.resizeAndPositionPixelSvg(
+      // Use transformSvg instead of the old resizeAndPositionPixelSvg
+      return await this.transformSvg(
         svgContent,
         logoWidth,
         logoHeight,
@@ -335,11 +462,6 @@ class SVGService {
     }
   }
 
-  /**
-   * Fetches the content of an SVG file.
-   * @param iconName Name of the icon file
-   * @returns A promise that resolves to the content of the SVG file
-   */
   private async fetchSvgContent(iconName: string): Promise<string> {
     const filePath = path.join(
       process.cwd(),
@@ -350,72 +472,6 @@ class SVGService {
     return await fs.readFile(filePath, "utf-8");
   }
 
-  /**
-   * Resizes and positions an SVG element.
-   * @param svgContent The original SVG content
-   * @param widthMm Desired width in millimeters
-   * @param heightMm Desired height in millimeters
-   * @param xMm X-coordinate in millimeters
-   * @param yMm Y-coordinate in millimeters
-   * @returns The resized and positioned SVG string
-   */
-  private resizeAndPositionPixelSvg(
-    svgContent: string,
-    widthMm: number,
-    heightMm: number,
-    xMm: number,
-    yMm: number
-  ): string {
-    const dom = new JSDOM();
-    const parser = new dom.window.DOMParser();
-    const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
-    const svgElement = svgDoc.documentElement;
-
-    const elementsWithCurrentColor = svgDoc.querySelectorAll(
-      '[fill="currentColor"], [stroke="currentColor"]'
-    );
-    elementsWithCurrentColor.forEach((el) => {
-      if (el.getAttribute("fill") === "currentColor") {
-        el.setAttribute("fill", "#000000");
-      }
-      if (el.getAttribute("stroke") === "currentColor") {
-        el.setAttribute("stroke", "#000000");
-      }
-    });
-
-    const viewBox = svgElement.getAttribute("viewBox");
-    let vbWidth, vbHeight;
-    if (viewBox) {
-      [, , vbWidth, vbHeight] = viewBox.split(" ").map(Number);
-    } else {
-      vbWidth = parseFloat(
-        (svgElement.getAttribute("width") || "50").replace("px", "")
-      );
-      vbHeight = parseFloat(
-        (svgElement.getAttribute("height") || "50").replace("px", "")
-      );
-    }
-
-    const scaleX = this.mmToPixels(widthMm) / vbWidth;
-    const scaleY = this.mmToPixels(heightMm) / vbHeight;
-    const scale = Math.min(scaleX, scaleY);
-
-    const transform = `translate(${this.mmToPixels(xMm)},${this.mmToPixels(
-      yMm
-    )}) scale(${scale})`;
-    return `<g transform="${transform}">${svgElement.innerHTML}</g>`;
-  }
-
-  /**
-   * Adds description text to the SVG.
-   * @param x X-coordinate of the text
-   * @param y Y-coordinate of the text
-   * @param text The description text
-   * @param containerHeight Height of the container
-   * @param fill Fill color of the text
-   * @param fontSize Font size of the text
-   * @returns The SVG string for the description text
-   */
   private addDescription(
     x: number,
     y: number,
@@ -425,34 +481,29 @@ class SVGService {
     fontSize: number
   ): string {
     const lines = text.split("\n");
-    const lineHeight = this.pixelsToMm(fontSize * 1.2);
-    const fontSizeMm = this.pixelsToMm(fontSize);
+    const lineHeight = this.mmToPixels(fontSize * 1.2);
+    const fontSizeMm = this.mmToPixels(fontSize);
 
     return `
-        <text x="${x}mm" y="${y + containerHeight / 2}mm" 
-              font-size="${fontSizeMm}mm"
-              text-anchor="middle"
-              dominant-baseline="middle"
-              font-weight="bold"
-              font-family="Arial,sans-serif"
-              fill="${fill}">
-            ${lines
-              .map(
-                (line, index) =>
-                  `<tspan x="${x}mm" dy="${
-                    index === 0 ? 0 : lineHeight
-                  }mm">${this.escapeXml(line.trim())}</tspan>`
-              )
-              .join("")}
-        </text>
+      <text x="${x}mm" y="${y + containerHeight / 2}mm" 
+            font-size="${fontSizeMm}mm"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            font-weight="bold"
+            font-family="Arial,sans-serif"
+            fill="${fill}">
+          ${lines
+            .map(
+              (line, index) =>
+                `<tspan x="${x}mm" dy="${
+                  index === 0 ? 0 : lineHeight
+                }mm">${this.escapeXml(line.trim())}</tspan>`
+            )
+            .join("")}
+      </text>
     `;
   }
 
-  /**
-   * Escapes special XML characters in a string.
-   * @param unsafe The string to escape
-   * @returns The escaped string
-   */
   private escapeXml(unsafe: string): string {
     return unsafe.replace(/[<>&'"]/g, (c) => {
       switch (c) {
@@ -471,10 +522,6 @@ class SVGService {
     });
   }
 
-  /**
-   * Adds crosses to mark the corners of a row.
-   * @returns The SVG string for the row crosses
-   */
   private addRowCrosses(): string {
     return this.addCrosses(
       this.rowStartX,
@@ -484,14 +531,6 @@ class SVGService {
     );
   }
 
-  /**
-   * Adds crosses to mark the corners of a rectangle.
-   * @param x X-coordinate of the top-left corner
-   * @param y Y-coordinate of the top-left corner
-   * @param width Width of the rectangle
-   * @param height Height of the rectangle
-   * @returns The SVG string for the crosses
-   */
   private addCrosses(
     x: number,
     y: number,
@@ -506,12 +545,6 @@ class SVGService {
     );
   }
 
-  /**
-   * Adds a single cross mark.
-   * @param x X-coordinate of the cross center
-   * @param y Y-coordinate of the cross center
-   * @returns The SVG string for the cross
-   */
   private addCross(x: number, y: number): string {
     const halfSize = this.config.CROSS_SIZE / 2;
     return (

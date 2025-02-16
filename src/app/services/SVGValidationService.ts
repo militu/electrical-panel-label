@@ -1,168 +1,26 @@
 // src/app/services/SVGValidationService.ts
 
-import { parseHTML } from "linkedom";
+export interface CustomIcon {
+  id: string;
+  name: string;
+  translations: Record<string, string>;
+  fileName: string;
+  isCustom: true;
+  dateAdded: string;
+}
 
 export class SVGValidationService {
-  private readonly PX_TO_MM = 0.26458333;
-  private readonly TARGET_SIZE_PX = 50;
-  private readonly ALLOWED_SVG_ATTRIBUTES = new Set([
-    "viewBox",
-    "width",
-    "height",
-    "fill",
-    "stroke",
-    "stroke-width",
-    "stroke-linecap",
-    "stroke-linejoin",
-    "d",
-    "points",
-    "x",
-    "y",
-    "transform",
-    "class",
-    "style",
-    "xmlns",
-    "cx",
-    "cy",
-    "r",
-  ]);
+  private readonly MAX_SIZE = 50 * 1024; // 50KB
 
-  private readonly ALLOWED_SVG_ELEMENTS = new Set([
-    "svg",
-    "path",
-    "rect",
-    "circle",
-    "ellipse",
-    "line",
-    "polyline",
-    "polygon",
-    "g",
-  ]);
-
-  public validateAndSanitizeSVG(svgContent: string): string {
-    const { document } = parseHTML(svgContent);
-
-    // Get the root SVG element
-    const svgElement = document.querySelector("svg");
-    if (!svgElement) {
-      throw new Error("No SVG element found");
-    }
-
-    // Normalize the viewBox
-    this.normalizeViewBox(svgElement);
-
-    // Remove any scripts or event handlers
-    this.removeUnsafeContent(svgElement);
-
-    // Replace currentColor with a solid color
-    this.replaceCurrentColor(svgElement);
-
-    // Sanitize the SVG
-    this.sanitizeElement(svgElement);
-
-    // Ensure proper namespace
-    svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-
-    return svgElement.outerHTML;
+  public validateFileSize(file: File): boolean {
+    return file.size <= this.MAX_SIZE;
   }
 
-  private normalizeViewBox(svgElement: Element): void {
-    let viewBox = svgElement.getAttribute("viewBox");
-    let width = svgElement.getAttribute("width");
-    let height = svgElement.getAttribute("height");
-
-    // If no viewBox but has width/height, create viewBox
-    if (!viewBox && width && height) {
-      viewBox = `0 0 ${width} ${height}`;
-    }
-
-    // If still no viewBox, set default
-    if (!viewBox) {
-      viewBox = "0 0 24 24"; // Default for most icon sets
-    }
-
-    // Parse viewBox values
-    const [minX, minY, vbWidth, vbHeight] = viewBox.split(/[\s,]+/).map(Number);
-
-    // Calculate the scale to fit our target size (50px)
-    const scale = Math.max(vbWidth, vbHeight) / this.TARGET_SIZE_PX;
-
-    // Calculate new viewBox dimensions in mm
-    const newWidth = (vbWidth / scale) * this.PX_TO_MM;
-    const newHeight = (vbHeight / scale) * this.PX_TO_MM;
-
-    // Center the content
-    const xOffset = (13.229166 - newWidth) / 2 - (minX * this.PX_TO_MM) / scale;
-    const yOffset =
-      (13.229166 - newHeight) / 2 - (minY * this.PX_TO_MM) / scale;
-
-    // Set new attributes
-    svgElement.setAttribute("width", "50");
-    svgElement.setAttribute("height", "50");
-    svgElement.setAttribute("viewBox", `0 0 13.229166 13.229167`);
-
-    // Wrap existing content in a group with transform
-    const content = svgElement.innerHTML;
-    svgElement.innerHTML = `<g transform="translate(${xOffset},${yOffset}) scale(${
-      this.PX_TO_MM / scale
-    })">${content}</g>`;
-  }
-
-  private replaceCurrentColor(element: Element): void {
-    const elementsWithCurrentColor = element.querySelectorAll(
-      '[fill="currentColor"], [stroke="currentColor"]'
+  public validateFileType(file: File): boolean {
+    // Accept both MIME type and extension
+    return (
+      file.type === "image/svg+xml" || file.name.toLowerCase().endsWith(".svg")
     );
-    elementsWithCurrentColor.forEach((el) => {
-      if (el.getAttribute("fill") === "currentColor") {
-        el.setAttribute("fill", "#000000");
-      }
-      if (el.getAttribute("stroke") === "currentColor") {
-        el.setAttribute("stroke", "#000000");
-      }
-    });
-
-    if (element.getAttribute("fill") === "currentColor") {
-      element.setAttribute("fill", "#000000");
-    }
-    if (element.getAttribute("stroke") === "currentColor") {
-      element.setAttribute("stroke", "#000000");
-    }
-  }
-
-  private removeUnsafeContent(element: Element): void {
-    const scripts = element.getElementsByTagName("script");
-    Array.from(scripts).forEach((script) => script.remove());
-
-    const elements = element.getElementsByTagName("*");
-    Array.from(elements).forEach((el) => {
-      Array.from(el.attributes).forEach((attr) => {
-        if (attr.name.startsWith("on")) {
-          el.removeAttribute(attr.name);
-        }
-      });
-    });
-  }
-
-  private sanitizeElement(element: Element): void {
-    if (!this.ALLOWED_SVG_ELEMENTS.has(element.tagName.toLowerCase())) {
-      element.remove();
-      return;
-    }
-
-    Array.from(element.attributes).forEach((attr) => {
-      if (!this.ALLOWED_SVG_ATTRIBUTES.has(attr.name.toLowerCase())) {
-        element.removeAttribute(attr.name);
-      }
-    });
-
-    Array.from(element.children).forEach((child) => {
-      this.sanitizeElement(child);
-    });
-  }
-
-  public validateSize(svgContent: string): boolean {
-    const maxSize = 50 * 1024; // 50KB
-    return svgContent.length <= maxSize;
   }
 
   public validateFileName(fileName: string): string {
@@ -178,59 +36,53 @@ export class SVGValidationService {
 
     return sanitized;
   }
-}
 
-export interface CustomIcon {
-  id: string;
-  name: string;
-  translations: Record<string, string>;
-  fileName: string;
-  isCustom: true;
-  dateAdded: string;
-}
+  public async validateSVGContent(file: File): Promise<boolean> {
+    try {
+      const text = await file.text();
+      console.log("SVG content:", text.substring(0, 200) + "..."); // Log the start of the content
 
-export class CustomIconStorage {
-  private readonly STORAGE_KEY = "custom-icons";
+      // First try parsing with DOMParser
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, "image/svg+xml");
 
-  /**
-   * Gets all stored custom icons
-   */
-  public getCustomIcons(): CustomIcon[] {
-    if (typeof window === "undefined") return [];
-    const stored = localStorage.getItem(this.STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  }
+      // Check for parsing errors
+      const parserError = doc.querySelector("parsererror");
+      if (parserError) {
+        console.error("SVG parsing error:", parserError.textContent);
+        return false;
+      }
 
-  /**
-   * Adds a new custom icon
-   */
-  public addCustomIcon(icon: CustomIcon): void {
-    if (typeof window === "undefined") return;
-    const icons = this.getCustomIcons();
-    icons.push(icon);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(icons));
-  }
+      // Get the root element
+      const rootElement = doc.documentElement;
+      console.log("Root element tag:", rootElement.tagName);
 
-  /**
-   * Removes a custom icon
-   */
-  public removeCustomIcon(iconId: string): void {
-    if (typeof window === "undefined") return;
-    const icons = this.getCustomIcons();
-    const filtered = icons.filter((icon) => icon.id !== iconId);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filtered));
-  }
+      // Basic validation: check if it's an SVG element with basic required attributes
+      if (rootElement.tagName.toLowerCase() !== "svg") {
+        console.error("Root element is not svg");
+        return false;
+      }
 
-  /**
-   * Updates a custom icon's metadata
-   */
-  public updateCustomIcon(iconId: string, updates: Partial<CustomIcon>): void {
-    if (typeof window === "undefined") return;
-    const icons = this.getCustomIcons();
-    const index = icons.findIndex((icon) => icon.id === iconId);
-    if (index !== -1) {
-      icons[index] = { ...icons[index], ...updates };
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(icons));
+      // Check for basic SVG validity (has either viewBox or width/height)
+      const hasViewBox = rootElement.hasAttribute("viewBox");
+      const hasWidthHeight =
+        rootElement.hasAttribute("width") && rootElement.hasAttribute("height");
+      const hasNamespace = rootElement.hasAttribute("xmlns");
+
+      console.log("SVG attributes:", {
+        hasViewBox,
+        hasWidthHeight,
+        hasNamespace,
+      });
+
+      // More lenient validation - only require the xmlns attribute
+      return hasNamespace;
+    } catch (error) {
+      console.error("SVG validation error:", error);
+      return false;
     }
   }
 }
+
+// Create singleton instance
+export const svgValidationService = new SVGValidationService();

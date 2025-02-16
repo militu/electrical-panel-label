@@ -1,56 +1,42 @@
 // src/app/hooks/useTranslatedIconList.ts
 
-import { CustomIconStorage } from "@/app/services/SVGValidationService";
-import { builtInIcons, Icon, IconName } from "@/app/types/Icon";
+import { builtInIcons, IconName } from "@/app/types/Icon";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useCustomIcons } from "./useCustomIcons";
 
-// Create a single instance outside the hook
-const iconStorage = new CustomIconStorage();
-
-export const useTranslatedIconList = () => {
+export function useTranslatedIconList() {
   const t = useTranslations("Icons");
   const currentLocale = useLocale();
-  const [allIcons, setAllIcons] = useState<Icon[]>([]);
+  const { icons: customIcons, isLoading, error } = useCustomIcons();
 
-  const updateIcons = useCallback(() => {
-    // Translate built-in icons
-    const translatedBuiltIn = builtInIcons.map((icon) => ({
+  const translateBuiltInIcons = useCallback(() => {
+    return builtInIcons.map((icon) => ({
       value: icon.value,
       label: t(icon.value as IconName),
       isCustom: false,
     }));
+  }, [t]);
 
-    // Get custom icons
-    const customIcons = iconStorage.getCustomIcons().map((icon) => ({
+  const translateCustomIcons = useCallback(() => {
+    return customIcons.map((icon) => ({
       value: icon.fileName,
       label: icon.translations[currentLocale as string] || icon.name,
       isCustom: true,
     }));
+  }, [customIcons, currentLocale]);
 
-    // Combine and sort all icons
-    setAllIcons(
-      [...translatedBuiltIn, ...customIcons].sort((a, b) =>
-        a.label.localeCompare(b.label, undefined, {
-          sensitivity: "base",
-          ignorePunctuation: true,
-        })
-      )
+  const allIcons = useMemo(() => {
+    const translatedBuiltIn = translateBuiltInIcons();
+    const translatedCustom = translateCustomIcons();
+
+    return [...translatedBuiltIn, ...translatedCustom].sort((a, b) =>
+      a.label.localeCompare(b.label, undefined, {
+        sensitivity: "base",
+        ignorePunctuation: true,
+      })
     );
-  }, [t, currentLocale]);
-
-  useEffect(() => {
-    // Initial update
-    updateIcons();
-
-    // Add event listener for custom icon changes
-    window.addEventListener("custom-icons-changed", updateIcons);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("custom-icons-changed", updateIcons);
-    };
-  }, [updateIcons]);
+  }, [translateBuiltInIcons, translateCustomIcons]);
 
   return allIcons;
-};
+}
