@@ -100,10 +100,17 @@ export async function POST(request: NextRequest) {
     try {
       normalizedSvg = await validateAndNormalizeSVG(fileContent);
     } catch (error) {
-      return NextResponse.json(
-        { error: `Invalid SVG: ${error.message}` },
-        { status: 400 }
-      );
+      if (error instanceof Error) {
+        return NextResponse.json(
+          { error: `Invalid SVG: ${error.message}` },
+          { status: 400 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Invalid SVG: Unknown error" },
+          { status: 400 }
+        );
+      }
     }
 
     // Generate unique filename
@@ -160,7 +167,12 @@ export async function DELETE(request: NextRequest) {
     try {
       await fs.unlink(filePath);
     } catch (error) {
-      if (error.code !== "ENOENT") {
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code !== "ENOENT"
+      ) {
         // Ignore if file doesn't exist
         throw error;
       }

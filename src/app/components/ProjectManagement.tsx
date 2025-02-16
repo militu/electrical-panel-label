@@ -82,7 +82,6 @@ const ProjectManagement: React.FC = () => {
       <ImportButton onImport={handleImport} className="w-full md:w-auto" />
       <IconManager
         onIconsChange={() => {
-          // This will force components using useTranslatedIconList to refresh their icon list
           window.dispatchEvent(new Event("custom-icons-changed"));
         }}
       />

@@ -26,11 +26,10 @@ export type IconName =
   | "stove"
   | "ventilation"
   | "washing-machine"
-  | "water-heater"
-  | string; // Allow custom icon names
+  | "water-heater";
 
 export interface Icon {
-  value: string;
+  value: IconName;
   label: string;
   isCustom?: boolean;
 }
@@ -62,4 +61,4 @@ export const builtInIcons: Icon[] = [
   { value: "ventilation", label: "Ventilation" },
   { value: "washing-machine", label: "Washing machine" },
   { value: "water-heater", label: "Water heater" },
-];
+] as const;

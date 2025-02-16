@@ -1,6 +1,6 @@
 // src/app/hooks/useTranslatedIconList.ts
 
-import { builtInIcons, IconName } from "@/app/types/Icon";
+import { builtInIcons } from "@/app/types/Icon";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useMemo } from "react";
 import { useCustomIcons } from "./useCustomIcons";
@@ -8,12 +8,12 @@ import { useCustomIcons } from "./useCustomIcons";
 export function useTranslatedIconList() {
   const t = useTranslations("Icons");
   const currentLocale = useLocale();
-  const { icons: customIcons, isLoading, error } = useCustomIcons();
+  const { icons: customIcons } = useCustomIcons();
 
   const translateBuiltInIcons = useCallback(() => {
     return builtInIcons.map((icon) => ({
       value: icon.value,
-      label: t(icon.value as IconName),
+      label: t(icon.value),
       isCustom: false,
     }));
   }, [t]);
