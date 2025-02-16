@@ -42,9 +42,13 @@ import React, { useCallback, useState } from "react";
 
 interface IconManagerProps {
   onIconsChange?: () => void;
+  className?: string;
 }
 
-const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
+const IconManager: React.FC<IconManagerProps> = ({
+  onIconsChange,
+  className,
+}) => {
   const t = useTranslations("IconManager");
   const currentLocale = useLocale() as Locale;
   const [isOpen, setIsOpen] = useState(false);
@@ -121,7 +125,7 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
             await addIcon({
               name: newIcon.name,
               translations: newIcon.translations,
-              dataUrl: dataUrl, // Pass the data URL
+              dataUrl: dataUrl,
               isCustom: true,
             });
             toast({ title: t("iconSaved") });
@@ -132,10 +136,10 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
         reader.onerror = () => {
           toast({
             title: t("saveFailed"),
-            description: t("fileReadError"), // You'll need to add this translation
+            description: t("fileReadError"),
             variant: "destructive",
           });
-          setIsUploading(false); // Ensure loading state is reset
+          setIsUploading(false);
         };
         reader.readAsDataURL(newIcon.file);
       } catch (error) {
@@ -146,7 +150,7 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
           variant: "destructive",
         });
       } finally {
-        setIsUploading(false); // Make sure to set this even on success within the onload
+        setIsUploading(false);
       }
     },
     [newIcon, addIcon, onIconsChange, resetForm, t, currentLocale]
@@ -209,7 +213,9 @@ const IconManager: React.FC<IconManagerProps> = ({ onIconsChange }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{t("manageIcons")}</Button>
+        <Button variant="outline" className={className}>
+          {t("manageIcons")}
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>

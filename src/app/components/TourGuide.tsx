@@ -38,6 +38,10 @@ const TourGuide: React.FC = () => {
       content: t("steps.globalSettings"),
     },
     {
+      target: ".tour-custom-icons",
+      content: t("steps.customIcons"),
+    },
+    {
       target: ".tour-sessions",
       content: t("steps.sessions"),
     },

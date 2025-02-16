@@ -193,6 +193,7 @@
       "globalSettings": "Ajustez ici les paramètres globaux affectant l'ensemble de la disposition du tableau, comme les dimensions standard des modules et les paramètres d'impression.",
       "sessions": "Gérez vos sessions de travail ici. Sauvegardez votre travail actuel, chargez des sessions précédentes ou commencez-en une nouvelle. Une session 'Default Session' est créée par défaut.",
       "projectManagement": "Utilisez ces boutons pour exporter votre projet actuel ou importer un projet existant. Idéal pour sauvegarder votre travail et le réimporter sur n'importe quel appareil.",
+      "customIcons": "Gérez vos icônes personnalisées ici. Vous pouvez télécharger de nouvelles icônes SVG et les utiliser dans vos modules, vous offrant des possibilités illimitées de personnalisation.",
       "panelLayout": "Voici votre espace de travail principal. Créez et gérez votre disposition de tableau en ajoutant des rangées et des modules.",
       "addRow": "Cliquez ici pour ajouter une nouvelle rangée à votre disposition de circuit. Chaque rangée peut contenir plusieurs modules.",
       "unitAddCustomization": "Cliquez ici pour ajouter un module",
@@ -255,7 +256,7 @@
   },
   "IconManager": {
     "title": "Gestionnaire d'icônes personnalisées",
-    "manageIcons": "Gérer les icônes personnalisées",
+    "manageIcons": "Gérer les icônes",
     "uploadNew": "Nouvelle icône",
     "manageExisting": "Gérer les icônes",
     "uploadTitle": "Télécharger une nouvelle icône",

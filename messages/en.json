@@ -193,6 +193,7 @@
       "globalSettings": "Adjust global settings here that affect the entire panel layout, such as standard module dimensions and print settings.",
       "sessions": "Manage your work sessions here. Save your current work, load previous sessions, or start a new one. A 'Default Session' is created by default.",
       "projectManagement": "Use these buttons to export your current project or import an existing project. Ideal for saving your work and reimporting it on any device.",
+      "customIcons": "Manage your custom icons here. You can upload new SVG icons and use them in your modules, giving you unlimited possibilities for customization.",
       "panelLayout": "This is your main workspace. Create and manage your panel layout by adding rows and modules.",
       "addRow": "Click here to add a new row to your circuit layout. Each row can contain multiple modules.",
       "unitAddCustomization": "Click here to add a module",

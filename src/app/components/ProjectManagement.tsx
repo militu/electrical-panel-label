@@ -5,7 +5,6 @@ import { toast } from "@/app/ui/shadcn/use-toast";
 import { saveAs } from "file-saver";
 import { useTranslations } from "next-intl";
 import React from "react";
-import IconManager from "./IconManager";
 
 const ProjectManagement: React.FC = () => {
   const { currentSession, importSession } = useSession();
@@ -80,11 +79,6 @@ const ProjectManagement: React.FC = () => {
         {t("exportProject")}
       </Button>
       <ImportButton onImport={handleImport} className="w-full md:w-auto" />
-      <IconManager
-        onIconsChange={() => {
-          window.dispatchEvent(new Event("custom-icons-changed"));
-        }}
-      />
     </div>
   );
 };
