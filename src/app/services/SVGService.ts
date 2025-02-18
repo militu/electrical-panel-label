@@ -152,6 +152,17 @@ class SVGService {
   }
 
   /**
+   * Converts pixels to millimeters.
+   * @param pixels Pixels to convert
+   * @param dpi Dots per inch (default: 96)
+   * @returns The equivalent number of millimeters
+   */
+  private pixelsToMm(pixels: number, dpi: number = 96): number {
+    const inches = pixels / dpi;
+    return inches * 25.4;
+  }
+
+  /**
    * Transforms an SVG string by scaling and positioning it.
    * @param svgContent The SVG content to transform.
    * @param widthMm The target width in millimeters.
@@ -578,8 +589,8 @@ class SVGService {
     fontSize: number
   ): string {
     const lines = text.split("\n");
-    const lineHeight = this.mmToPixels(fontSize * 1.2);
-    const fontSizeMm = this.mmToPixels(fontSize);
+    const fontSizeMm = this.pixelsToMm(fontSize); // Using existing method
+    const lineHeight = fontSizeMm * 1.2;
 
     return `
       <text x="${x}mm" y="${y + containerHeight / 2}mm" 
