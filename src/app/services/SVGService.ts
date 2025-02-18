@@ -440,38 +440,59 @@ class SVGService {
       );
     }
 
-    // Bottom rectangle
+    // Bottom half
+    const bottomY = y + unitHeight / 2;
     content += this.addRectangle(
       x,
-      y + unitHeight / 2,
+      bottomY,
       unitWidth,
       unitHeight / 2,
       unit.bottom_color
     );
 
-    // Sidebar rectangle
     content += this.addRectangle(
       x,
-      y + unitHeight / 2,
-      unit.sidebar_width,
+      bottomY,
+      sidebarWidth,
       unitHeight / 2,
       unit.sidebar_color
     );
 
-    // Text
-    const halfWidth = (unitWidth - sidebarWidth) / 2;
-    const textX = x + sidebarWidth + halfWidth;
+    // Text area dimensions
+    const textAreaWidth = unitWidth - sidebarWidth;
+    const textAreaX = x + sidebarWidth;
+    const textAreaHeight = unitHeight / 2;
 
+    // Center text in available space
     content += this.addDescription(
-      textX,
-      y + unitHeight / 2,
+      textAreaX + textAreaWidth / 2, // Center of available width
+      bottomY, // Start of bottom rectangle
       unit.description,
-      unitHeight / 2,
+      textAreaHeight, // Height of bottom rectangle
       unit.description_color,
       unit.description_font_size
     );
 
     return content;
+  }
+
+  /**
+   * Calculates text measurements and positioning
+   * @param text The text to measure
+   * @param fontSize Font size in pixels
+   * @returns Object with text measurements and position
+   */
+  private calculateTextMetrics(text: string, fontSize: number) {
+    const lines = text.split("\n");
+    const fontSizeMm = this.pixelsToMm(fontSize);
+    // Scale line height based on font size - using standard typographic ratio
+    const lineHeight = fontSizeMm * 1.2;
+
+    return {
+      lines,
+      fontSizeMm,
+      lineHeight,
+    };
   }
 
   /**
@@ -580,35 +601,57 @@ class SVGService {
     }
   }
 
+  /**
+   * Adds description text to the SVG with exact vertical and horizontal centering
+   */
   private addDescription(
-    x: number,
-    y: number,
+    x: number, // Center point for text
+    y: number, // Top of container
     text: string,
     containerHeight: number,
     fill: string,
     fontSize: number
   ): string {
-    const lines = text.split("\n");
-    const fontSizeMm = this.pixelsToMm(fontSize); // Using existing method
-    const lineHeight = fontSizeMm * 1.2;
+    const metrics = this.calculateTextMetrics(text, fontSize);
+    const lines = metrics.lines;
+
+    // Calculate spacing proportional to font size
+    const lineSpacing = metrics.lineHeight - metrics.fontSizeMm; // Space between lines
+
+    // Height of each line is the font size
+    const totalLinesHeight = lines.length * metrics.fontSizeMm;
+    // Total spacing between lines
+    const totalSpacing = (lines.length - 1) * lineSpacing;
+
+    // Total height of the text block
+    const textBlockHeight = totalLinesHeight + totalSpacing;
+
+    // Find vertical center of container
+    const containerMiddle = y + containerHeight / 2;
+    // Position first line so text block is centered
+    const firstLineY =
+      containerMiddle - textBlockHeight / 2 - metrics.fontSizeMm / 6;
 
     return `
-      <text x="${x}mm" y="${y + containerHeight / 2}mm" 
-            font-size="${fontSizeMm}mm"
-            text-anchor="middle"
-            dominant-baseline="middle"
-            font-weight="bold"
+        <text 
+            x="${x}mm"
             font-family="Arial,sans-serif"
+            font-size="${metrics.fontSizeMm}mm"
+            font-weight="bold"
+            text-anchor="middle"
             fill="${fill}">
-          ${lines
-            .map(
-              (line, index) =>
-                `<tspan x="${x}mm" dy="${
-                  index === 0 ? 0 : lineHeight
-                }mm">${this.escapeXml(line.trim())}</tspan>`
-            )
-            .join("")}
-      </text>
+            ${lines
+              .map((line, index) => {
+                // Each subsequent line is positioned by font size plus spacing
+                const lineY =
+                  firstLineY + index * metrics.fontSizeMm + index * lineSpacing;
+                return `<tspan 
+                    x="${x}mm" 
+                    y="${lineY + metrics.fontSizeMm}mm"
+                >${this.escapeXml(line.trim())}</tspan>`;
+              })
+              .join("")}
+        </text>
     `;
   }
 
